@@ -12,7 +12,7 @@ const ClientListPage = () => {
     // Filter distributors by search term
     const filteredDistribuidores = distribuidores.filter(d =>
         d.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        d.region.toLowerCase().includes(searchTerm.toLowerCase())
+        d.sector.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
     // Stats
@@ -137,7 +137,7 @@ const ClientListPage = () => {
                                                 </div>
                                                 <div>
                                                     <p className="font-bold text-text-primary">{distribuidor.nombreCorto}</p>
-                                                    <p className="text-xs text-text-secondary">{distribuidor.tipo} • {distribuidor.region}</p>
+                                                    <p className="text-xs text-text-secondary">{distribuidor.sector}</p>
                                                 </div>
                                             </div>
                                         </td>

@@ -13,15 +13,6 @@ const SECTORES = [
     'Telecomunicaciones',
 ]
 
-const REGIONES = [
-    'Norteamérica (Global HQ)',
-    'NY, USA',
-    'Londres, UK',
-    'Austin, USA',
-    'Ciudad de México, MX',
-    'São Paulo, BR',
-]
-
 const ClientDetailPage = () => {
     const { id } = useParams()
     const navigate = useNavigate()
@@ -31,8 +22,6 @@ const ClientDetailPage = () => {
     const [formData, setFormData] = useState({
         nombre: '',
         sector: '',
-        kam: '',
-        region: '',
         objetivoAnual: 0,
         trimestres: {
             Q1: { meta: 0 },
@@ -49,8 +38,6 @@ const ClientDetailPage = () => {
             setFormData({
                 nombre: originalDistribuidor.nombre,
                 sector: originalDistribuidor.sector,
-                kam: originalDistribuidor.kam?.nombre || '',
-                region: originalDistribuidor.region,
                 objetivoAnual: originalDistribuidor.objetivoAnual,
                 trimestres: {
                     Q1: { meta: originalDistribuidor.trimestres.Q1.meta },
@@ -112,8 +99,6 @@ const ClientDetailPage = () => {
         setFormData({
             nombre: originalDistribuidor.nombre,
             sector: originalDistribuidor.sector,
-            kam: originalDistribuidor.kam?.nombre || '',
-            region: originalDistribuidor.region,
             objetivoAnual: originalDistribuidor.objetivoAnual,
             trimestres: {
                 Q1: { meta: originalDistribuidor.trimestres.Q1.meta },
@@ -204,31 +189,6 @@ const ClientDetailPage = () => {
                             >
                                 {SECTORES.map(s => (
                                     <option key={s} value={s}>{s}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-semibold text-text-primary mb-2">
-                                KAM asignado
-                            </label>
-                            <input
-                                type="text"
-                                value={formData.kam}
-                                onChange={(e) => handleChange('kam', e.target.value)}
-                                className="form-input-base"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-semibold text-text-primary mb-2">
-                                Región
-                            </label>
-                            <select
-                                value={formData.region}
-                                onChange={(e) => handleChange('region', e.target.value)}
-                                className="form-input-base"
-                            >
-                                {REGIONES.map(r => (
-                                    <option key={r} value={r}>{r}</option>
                                 ))}
                             </select>
                         </div>

@@ -12,7 +12,7 @@ Un portal moderno y eficiente para la gestión de ventas y distribución B2B, di
 ### 🔐 Panel de Administración
 *   **Gestión de Clientes**: Creación y edición de perfiles de clientes corporativos.
 *   **Control de Usuarios**: Administración de cuentas, roles y permisos.
-*   **Carga de Ventas**: Sistema ágil para el registro semanal de desempeño comercial (COP/USD).
+*   **Carga de Ventas**: Sistema ágil para el registro semanal de desempeño comercial
 *   **Configuración de Metas**: Definición de objetivos anuales y desgloses trimestrales.
 
 ## 🛠️ Tecnologías Utilizadas
@@ -28,7 +28,7 @@ Un portal moderno y eficiente para la gestión de ventas y distribución B2B, di
 1.  **Clonar el repositorio**
     ```bash
     git clone https://github.com/TU_USUARIO/NOMBRE_REPO.git
-    cd portal-distribuidores-solidview
+    cd portal_distribuidores_solidview
     ```
 
 2.  **Instalar dependencias**
