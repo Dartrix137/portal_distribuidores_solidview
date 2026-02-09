@@ -55,6 +55,3 @@ El portal sigue una línea estética premium con:
 *   Paleta de colores profesional centrada en el naranja corporativo (`#E98D04`).
 *   Diseño limpio y enfocado en datos.
 *   Micro-animaciones para una experiencia fluida.
-
----
-© 2024 Solidview - Todos los derechos reservados.
