@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lista de Clientes Solidview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#E98D04",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .fill-1 { font-variation-settings: 'FILL' 1; }
+        :root {
+            --primary-color: #E98D04;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#111418] dark:text-white min-h-screen">
+<div class="flex h-screen overflow-hidden">
+<aside class="w-64 flex-shrink-0 border-r border-[#dbe0e6] dark:border-[#2d3748] bg-white dark:bg-[#1a202c] h-full flex flex-col justify-between p-4">
+<div class="flex flex-col gap-8">
+<div class="flex items-center gap-3 px-2">
+<div class="flex items-center">
+<img alt="Solidview Logo" class="h-8 w-auto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxXSiwsTsUWFhjEuZG9Pf-eSZHFW29OeZPm0ZAqsErbiewfGDfCrZQvv3xBMwDYFK8WSVJ9dEz7pJLRSmQYl4ZwfSseVlyspOBgL27jC_6Kmm8HAFIsoQIOTGwX8Z-BX-Tppi1685YT7mVeEYMa4esIEXeBKvemHvpRDwVOF53C9dniL6WEDEl_v5B9aAc4qNDyhiJ4j5iFGlRphQiv1HrY_ihrIOAX7pKDjH0UKpOe_I9cdU6jHDPj1D2V1Pp2UzOYm5dKcj_Y0TN"/>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#617589] dark:text-gray-400 hover:bg-[#f0f2f4] dark:hover:bg-gray-800 transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Panel</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary transition-colors" href="#">
+<span class="material-symbols-outlined fill-1">group</span>
+<span class="text-sm font-semibold">Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#617589] dark:text-gray-400 hover:bg-[#f0f2f4] dark:hover:bg-gray-800 transition-colors" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-sm font-medium">Ventas</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#617589] dark:text-gray-400 hover:bg-[#f0f2f4] dark:hover:bg-gray-800 transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-sm font-medium">Usuarios</span>
+</a>
+</nav>
+</div>
+<div class="border-t border-[#dbe0e6] dark:border-[#2d3748] pt-4 mt-auto">
+<div class="flex items-center gap-3 px-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-[#dbe0e6] dark:border-gray-600" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAS_uLBCmDEVtqpEk_JDxn2YudCESG64qEJg3As3N3bVSeaXNucC6k02wC9Z7Q_DHlQE-qK9hlpjnOAQiKd3iLRmXK_3UFPp85iN7bSZe77hgj5G9MYCwV06wi8ZTIdeKRkWe987S4BSYkh5Mv5xSSoFV6-33P2VdYiruIX3IYZ2yCXWK7P0TITqNqP1IWe02k7ZxESLOxIYsb_ntJy7rnV7_L36P2MV1WSzcimEy8kxThoEbOTAGmcewMAIAI7OX4x_-J24OoRKrBy");'></div>
+<div class="flex flex-col overflow-hidden">
+<p class="text-sm font-bold truncate">Alex Morgan</p>
+<p class="text-xs text-[#617589] dark:text-gray-400 truncate">Administrador Senior</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col overflow-y-auto">
+<header class="flex items-center justify-between border-b border-[#dbe0e6] dark:border-[#2d3748] bg-white dark:bg-[#1a202c] px-8 py-3 sticky top-0 z-10">
+<div class="flex items-center gap-4">
+<span class="text-[#617589] dark:text-gray-400 text-sm font-medium">Admin</span>
+<span class="text-[#617589] dark:text-gray-400 text-sm">/</span>
+<span class="text-[#111418] dark:text-white text-sm font-semibold">Lista de Clientes</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative min-w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#617589] text-xl">search</span>
+<input class="w-full bg-[#f0f2f4] dark:bg-gray-800 border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary dark:text-white placeholder:text-[#617589]" placeholder="Buscar clientes..." type="text"/>
+</div>
+<button class="bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-opacity-90 transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">add</span>
+                    Crear cliente
+                </button>
+</div>
+</header>
+<div class="p-8 max-w-7xl mx-auto w-full">
+<div class="mb-8">
+<div class="flex justify-between items-end mb-6">
+<div>
+<h2 class="text-3xl font-black tracking-tight mb-2">Directorio de Clientes</h2>
+<p class="text-[#617589] dark:text-gray-400">Resumen de todas las cuentas corporativas y su estado de rendimiento de ventas.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-white dark:bg-[#1a202c] p-6 rounded-xl border border-[#dbe0e6] dark:border-[#2d3748] shadow-sm">
+<p class="text-[#617589] dark:text-gray-400 text-sm font-medium mb-1">Total de Clientes</p>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold">1,284</span>
+<span class="text-[#078838] text-sm font-semibold flex items-center"><span class="material-symbols-outlined text-sm">arrow_upward</span>12%</span>
+</div>
+</div>
+<div class="bg-white dark:bg-[#1a202c] p-6 rounded-xl border border-[#dbe0e6] dark:border-[#2d3748] shadow-sm">
+<p class="text-[#617589] dark:text-gray-400 text-sm font-medium mb-1">Cuentas Activas</p>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold">1,150</span>
+<span class="text-[#078838] text-sm font-semibold flex items-center"><span class="material-symbols-outlined text-sm">arrow_upward</span>5%</span>
+</div>
+</div>
+<div class="bg-white dark:bg-[#1a202c] p-6 rounded-xl border border-[#dbe0e6] dark:border-[#2d3748] shadow-sm">
+<p class="text-[#617589] dark:text-gray-400 text-sm font-medium mb-1">Nuevos este mes</p>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold">24</span>
+<span class="text-primary text-sm font-semibold flex items-center">Nuevo</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-[#1a202c] rounded-xl border border-[#dbe0e6] dark:border-[#2d3748] shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#f8f9fa] dark:bg-gray-800/50 border-b border-[#dbe0e6] dark:border-[#2d3748]">
+<th class="px-6 py-4 text-xs font-bold text-[#617589] dark:text-gray-400 uppercase tracking-wider">Nombre del cliente</th>
+<th class="px-6 py-4 text-xs font-bold text-[#617589] dark:text-gray-400 uppercase tracking-wider">Año actual</th>
+<th class="px-6 py-4 text-xs font-bold text-[#617589] dark:text-gray-400 uppercase tracking-wider">Estado</th>
+<th class="px-6 py-4 text-xs font-bold text-[#617589] dark:text-gray-400 uppercase tracking-wider text-right">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#dbe0e6] dark:divide-[#2d3748]">
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-9 bg-primary/10 rounded-lg flex items-center justify-center text-primary font-bold text-sm">GL</div>
+<div>
+<p class="font-bold text-[#111418] dark:text-white">Global Logistics Corp</p>
+<p class="text-xs text-[#617589] dark:text-gray-400">Corporativo • NY, USA</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="text-sm font-medium">$1.2M</p>
+<div class="w-24 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mt-1.5 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 75%;"></div>
+</div>
+</td>
+<td class="px-6 py-4">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+<span class="ml-3 text-sm font-medium text-[#111418] dark:text-gray-300">Activo</span>
+</label>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 text-[#617589] dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors rounded-lg hover:bg-primary/10">
+<span class="material-symbols-outlined text-xl">visibility</span>
+</button>
+<button class="p-2 text-[#617589] dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors rounded-lg hover:bg-primary/10">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-9 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600 font-bold text-sm">TS</div>
+<div>
+<p class="font-bold text-[#111418] dark:text-white">Techstream Solutions</p>
+<p class="text-xs text-[#617589] dark:text-gray-400">Pyme • Londres, UK</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="text-sm font-medium">$840K</p>
+<div class="w-24 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mt-1.5 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 45%;"></div>
+</div>
+</td>
+<td class="px-6 py-4">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+<span class="ml-3 text-sm font-medium text-[#111418] dark:text-gray-300">Activo</span>
+</label>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 text-[#617589] dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors rounded-lg hover:bg-primary/10">
+<span class="material-symbols-outlined text-xl">visibility</span>
+</button>
+<button class="p-2 text-[#617589] dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors rounded-lg hover:bg-primary/10">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-9 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600 font-bold text-sm">AV</div>
+<div>
+<p class="font-bold text-[#111418] dark:text-white">Apex Ventures</p>
+<p class="text-xs text-[#617589] dark:text-gray-400">Venture • Austin, USA</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="text-sm font-medium">$320K</p>
+<div class="w-24 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mt-1.5 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 20%;"></div>
+</div>
+</td>
+<td class="px-6 py-4">
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+<span class="ml-3 text-sm font-medium text-[#617589] dark:text-gray-400">Inactivo</span>
+</label>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 text-[#617589] dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors rounded-lg hover:bg-primary/10">
+<span class="material-symbols-outlined text-xl">visibility</span>
+</button>
+<button class="p-2 text-[#617589] dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors rounded-lg hover:bg-primary/10">
+<span class="material-symbols-outlined text-xl">edit</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-4 border-t border-[#dbe0e6] dark:border-[#2d3748] flex items-center justify-between bg-[#f8f9fa] dark:bg-gray-800/50">
+<p class="text-xs text-[#617589] dark:text-gray-400 font-medium">Mostrando 1 a 3 de 1,284 resultados</p>
+<div class="flex gap-1">
+<button class="size-8 rounded-lg flex items-center justify-center border border-[#dbe0e6] dark:border-gray-600 bg-white dark:bg-gray-800 text-[#617589] hover:bg-gray-50 transition-colors">
+<span class="material-symbols-outlined text-lg">chevron_left</span>
+</button>
+<button class="size-8 rounded-lg flex items-center justify-center bg-primary text-white font-bold text-xs">1</button>
+<button class="size-8 rounded-lg flex items-center justify-center border border-[#dbe0e6] dark:border-gray-600 bg-white dark:bg-gray-800 text-[#617589] hover:bg-gray-50 transition-colors font-bold text-xs">2</button>
+<button class="size-8 rounded-lg flex items-center justify-center border border-[#dbe0e6] dark:border-gray-600 bg-white dark:bg-gray-800 text-[#617589] hover:bg-gray-50 transition-colors font-bold text-xs">3</button>
+<button class="size-8 rounded-lg flex items-center justify-center border border-[#dbe0e6] dark:border-gray-600 bg-white dark:bg-gray-800 text-[#617589] hover:bg-gray-50 transition-colors">
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

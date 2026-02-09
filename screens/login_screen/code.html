@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Iniciar sesión | Solidview Sales Performance</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#E98D04",
+                        "background-light": "#f8f9fa",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        :root {
+            --primary-color: #E98D04;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col">
+<header class="flex items-center justify-center border-b border-solid border-[#dbe0e6] dark:border-[#2a343d] px-10 py-6 bg-white dark:bg-[#111418]">
+<div class="flex items-center gap-4 text-[#111418] dark:text-white">
+<img alt="Solidview Logo" class="h-10 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZwwmS-fa_rN8iqFqhD2IT3hfRfYNp_FV_ZjPsLf9XZ0pqb1jBwe6LbeGD-691CGWFJ3GRzt8lzocWStMmSu5SH22LME04eg8lVNrlb1tlEEHRHEnaHK3YO7GByne8_asvslpTQocce689v2ZDoQqpW2DWeKEzcrZ2oWy4W6cI3abuXd6rNVBZeDrPP0ucaEqbRHDq0EAiZcW05s02YPy033lZoLg29l9Tm4v8HyC4ro6zKA1s0GpY3PnrvY1FQWJE-fUd_oxrnXyX"/>
+</div>
+</header>
+<main class="flex-1 flex items-center justify-center px-4 py-12">
+<div class="layout-content-container flex flex-col w-full max-w-[440px] bg-white dark:bg-[#111418] p-10 rounded-xl shadow-lg border border-[#e5e7eb] dark:border-[#2a343d]">
+<div class="mb-8">
+<h1 class="text-[#111418] dark:text-white tracking-tight text-[28px] font-bold leading-tight text-center pb-2">Iniciar sesión</h1>
+<p class="text-[#64748b] dark:text-[#94a3b8] text-sm font-normal leading-normal text-center">Ingrese sus credenciales para acceder al panel de rendimiento</p>
+</div>
+<form class="flex flex-col gap-6">
+<div class="flex flex-col gap-2">
+<label class="flex flex-col w-full">
+<p class="text-[#111418] dark:text-white text-sm font-semibold leading-normal pb-1">Correo electrónico</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] dark:text-white focus:outline-0 focus:ring-2 focus:ring-[var(--primary-color)]/20 border border-[#d1d5db] dark:border-[#2a343d] bg-white dark:bg-[#1a2129] focus:border-[var(--primary-color)] h-12 placeholder:text-[#94a3b8] px-4 text-base font-normal leading-normal transition-all" placeholder="nombre@empresa.com" required="" type="email"/>
+</label>
+</div>
+<div class="flex flex-col gap-2">
+<label class="flex flex-col w-full">
+<p class="text-[#111418] dark:text-white text-sm font-semibold leading-normal pb-1">Contraseña</p>
+<div class="flex w-full flex-1 items-stretch rounded-lg group">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-lg border-r-0 text-[#111418] dark:text-white focus:outline-0 focus:ring-2 focus:ring-[var(--primary-color)]/20 border border-[#d1d5db] dark:border-[#2a343d] bg-white dark:bg-[#1a2129] focus:border-[var(--primary-color)] h-12 placeholder:text-[#94a3b8] px-4 text-base font-normal leading-normal transition-all" placeholder="••••••••" required="" type="password"/>
+<div class="text-[#64748b] dark:text-[#94a3b8] flex border border-[#d1d5db] dark:border-[#2a343d] bg-white dark:bg-[#1a2129] items-center justify-center px-4 rounded-r-lg border-l-0 cursor-pointer hover:text-[var(--primary-color)] transition-colors">
+<span class="material-symbols-outlined" style="font-size: 20px;">visibility</span>
+</div>
+</div>
+</label>
+</div>
+<button class="flex w-full items-center justify-center rounded-lg h-12 px-4 bg-[var(--primary-color)] text-white text-base font-bold leading-normal tracking-[0.015em] hover:brightness-110 transition-all shadow-md active:scale-[0.98] mt-2" type="submit">
+<span>Iniciar sesión</span>
+</button>
+</form>
+</div>
+</main>
+<footer class="py-6 px-10 border-t border-[#dbe0e6] dark:border-[#2a343d] flex flex-col md:flex-row justify-between items-center gap-4 text-[#64748b] dark:text-[#94a3b8] text-xs">
+<div class="flex gap-6">
+<a class="hover:text-[#111418] dark:hover:text-white transition-colors" href="#">Política de Privacidad</a>
+<a class="hover:text-[#111418] dark:hover:text-white transition-colors" href="#">Términos de Servicio</a>
+<a class="hover:text-[#111418] dark:hover:text-white transition-colors" href="#">Seguridad</a>
+</div>
+<p>© 2024 Solidview. Todos los derechos reservados.</p>
+</footer>
+
+</body></html>

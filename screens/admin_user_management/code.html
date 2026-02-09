@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gestión de Usuarios - Solidview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#E98D04",
+                        "background-light": "#f8f9fa",
+                        "background-dark": "#0f1115",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.375rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar-active {
+            background-color: #E98D04;
+            color: white !important;
+            border-radius: 0.5rem;
+        }
+        .sidebar-link:hover:not(.sidebar-active) {
+            background-color: rgba(233, 141, 4, 0.05);
+            color: #E98D04;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#1a1c21] dark:text-white antialiased">
+<div class="flex min-h-screen">
+<aside class="w-64 border-r border-[#e2e8f0] dark:border-gray-800 bg-white dark:bg-[#15181e] flex flex-col">
+<div class="p-6 flex flex-col gap-1">
+<h1 class="text-primary text-2xl font-black flex items-center gap-2 tracking-tighter">
+<span class="material-symbols-outlined font-bold text-3xl">blur_on</span>
+<span>SOLIDVIEW</span>
+</h1>
+<p class="text-[#64748b] dark:text-gray-400 text-[10px] font-bold uppercase tracking-[0.1em] mt-1">Panel de Administración</p>
+</div>
+<nav class="flex-1 flex flex-col mt-4 px-4 gap-1">
+<a class="flex items-center gap-3 px-4 py-3 sidebar-active font-semibold transition-all sidebar-link" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm">Gestión de Usuarios</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#475569] dark:text-gray-400 transition-colors sidebar-link" href="#">
+<span class="material-symbols-outlined">business</span>
+<span class="text-sm">Cuentas de Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#475569] dark:text-gray-400 transition-colors sidebar-link" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-sm">Logs de Desempeño</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#475569] dark:text-gray-400 transition-colors sidebar-link" href="#">
+<span class="material-symbols-outlined">settings_accessibility</span>
+<span class="text-sm">Control de Acceso</span>
+</a>
+<div class="my-4 px-2">
+<div class="h-px bg-[#e2e8f0] dark:bg-gray-800 w-full"></div>
+</div>
+<a class="flex items-center gap-3 px-4 py-3 text-[#475569] dark:text-gray-400 transition-colors sidebar-link" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm">Configuración</span>
+</a>
+</nav>
+<div class="p-6 mt-auto border-t border-[#e2e8f0] dark:border-gray-800">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-lg bg-primary text-white flex items-center justify-center font-bold">
+                    AD
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="text-sm font-bold truncate">Alex Director</span>
+<span class="text-[11px] text-[#64748b]">Administrador</span>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col overflow-x-hidden">
+<header class="h-16 border-b border-[#e2e8f0] dark:border-gray-800 bg-white dark:bg-[#15181e] flex items-center justify-between px-8 sticky top-0 z-10">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-lg">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">search</span>
+<input class="w-full bg-[#f1f5f9] dark:bg-gray-800 border-transparent rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary focus:bg-white transition-all placeholder:text-gray-400" placeholder="Buscar por nombre, email o ID de cliente..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-5">
+<button class="flex items-center gap-2 bg-primary hover:bg-[#d17f04] text-white px-5 py-2.5 rounded-lg text-sm font-bold transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">person_add</span>
+<span>Nuevo Usuario</span>
+</button>
+<div class="h-6 w-px bg-[#e2e8f0] dark:border-gray-800"></div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-primary rounded-full border-2 border-white dark:border-[#15181e]"></span>
+</button>
+<div class="size-9 bg-cover bg-center rounded-lg border border-gray-200 dark:border-gray-700" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuApytjrnb9wAwhKVZFmRM2DfXXXNpI8uzlOFz-gfR_KQFj3lXftD8-FdOgCMxdm84vzHXYr3msKJ3ZEWItUIHxMxPdJ-x7CrNRpb8hop7Y65RnFBAtxc5Ek6huYuBQeLj3ngWons7V4P8JLC2U_NrWVYSOt1gadxMf-5FXzeV_FFEa6EDOEM8PiQi82UILMMqr24sVNueenTKKTU0iG0tdt7Yk1db8zj0PBeA6C-oWmid2ABAaoOb4SsY6EsSmrD61_NcBKufX82GJL");'></div>
+</div>
+</div>
+</header>
+<div class="p-8 max-w-7xl w-full mx-auto">
+<nav class="flex items-center gap-2 mb-2">
+<a class="text-[#64748b] text-xs font-semibold hover:text-primary transition-colors" href="#">Administración</a>
+<span class="text-gray-400 text-[10px] material-symbols-outlined">chevron_right</span>
+<span class="text-[#1a1c21] dark:text-white text-xs font-bold uppercase tracking-wide">Gestión de Usuarios</span>
+</nav>
+<div class="flex justify-between items-end mb-8">
+<div class="flex flex-col gap-1">
+<h2 class="text-2xl font-black tracking-tight text-[#0f172a] dark:text-white">Gestión de Usuarios Solidview</h2>
+<p class="text-[#64748b] dark:text-gray-400 text-sm">Administre niveles de acceso y perfiles de usuarios internos y clientes.</p>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-4 py-2 border border-[#e2e8f0] dark:border-gray-800 bg-white dark:bg-gray-900 text-sm font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+<span class="material-symbols-outlined text-lg text-gray-400">filter_list</span>
+<span>Filtrar</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 border border-[#e2e8f0] dark:border-gray-800 bg-white dark:bg-gray-900 text-sm font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+<span class="material-symbols-outlined text-lg text-gray-400">download</span>
+<span>Exportar</span>
+</button>
+</div>
+</div>
+<div class="bg-white dark:bg-[#15181e] rounded-xl border border-[#e2e8f0] dark:border-gray-800 overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-gray-50/80 dark:bg-gray-900/50 border-b border-[#e2e8f0] dark:border-gray-800">
+<tr>
+<th class="px-6 py-4 text-[11px] font-extrabold uppercase tracking-wider text-[#64748b] dark:text-gray-400">Nombre</th>
+<th class="px-6 py-4 text-[11px] font-extrabold uppercase tracking-wider text-[#64748b] dark:text-gray-400">Rol</th>
+<th class="px-6 py-4 text-[11px] font-extrabold uppercase tracking-wider text-[#64748b] dark:text-gray-400">Cliente asignado</th>
+<th class="px-6 py-4 text-[11px] font-extrabold uppercase tracking-wider text-[#64748b] dark:text-gray-400">Última actividad</th>
+<th class="px-6 py-4 text-[11px] font-extrabold uppercase tracking-wider text-[#64748b] dark:text-gray-400 text-right">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#e2e8f0] dark:divide-gray-800">
+<tr class="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-9 rounded-full bg-amber-50 dark:bg-amber-900/20 text-primary flex items-center justify-center font-bold text-xs border border-primary/20">JS</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-[#1a1c21] dark:text-white">John Smith</span>
+<span class="text-xs text-gray-500 font-medium">john.smith@corporate.com</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">Admin</span>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-gray-600 dark:text-gray-400">Corporate HQ</td>
+<td class="px-6 py-4 text-sm text-gray-500">Hace 2 horas</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-1 text-gray-400">
+<button class="p-1.5 hover:bg-amber-50 hover:text-primary rounded transition-all" title="Editar"><span class="material-symbols-outlined text-xl">edit_square</span></button>
+<button class="p-1.5 hover:bg-amber-50 hover:text-primary rounded transition-all" title="Resetear contraseña"><span class="material-symbols-outlined text-xl">lock_reset</span></button>
+<button class="p-1.5 hover:bg-red-50 hover:text-red-500 rounded transition-all" title="Desactivar"><span class="material-symbols-outlined text-xl">block</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-9 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 flex items-center justify-center font-bold text-xs border border-blue-200 dark:border-blue-800">SJ</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-[#1a1c21] dark:text-white">Sarah Jenkins</span>
+<span class="text-xs text-gray-500 font-medium">s.jenkins@acme.com</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">Cliente</span>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-gray-600 dark:text-gray-400">Acme Corp</td>
+<td class="px-6 py-4 text-sm text-gray-500">Hace 5 min</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-1 text-gray-400">
+<button class="p-1.5 hover:bg-amber-50 hover:text-primary rounded transition-all" title="Editar"><span class="material-symbols-outlined text-xl">edit_square</span></button>
+<button class="p-1.5 hover:bg-amber-50 hover:text-primary rounded transition-all" title="Resetear contraseña"><span class="material-symbols-outlined text-xl">lock_reset</span></button>
+<button class="p-1.5 hover:bg-red-50 hover:text-red-500 rounded transition-all" title="Desactivar"><span class="material-symbols-outlined text-xl">block</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-9 rounded-full bg-purple-50 dark:bg-purple-900/20 text-purple-600 flex items-center justify-center font-bold text-xs border border-purple-200 dark:border-purple-800">MC</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-[#1a1c21] dark:text-white">Michael Chen</span>
+<span class="text-xs text-gray-500 font-medium">m.chen@global.inc</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">Cliente</span>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-gray-600 dark:text-gray-400">Global Industries</td>
+<td class="px-6 py-4 text-sm text-gray-500">Hace 1 día</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-1 text-gray-400">
+<button class="p-1.5 hover:bg-amber-50 hover:text-primary rounded transition-all" title="Editar"><span class="material-symbols-outlined text-xl">edit_square</span></button>
+<button class="p-1.5 hover:bg-amber-50 hover:text-primary rounded transition-all" title="Resetear contraseña"><span class="material-symbols-outlined text-xl">lock_reset</span></button>
+<button class="p-1.5 hover:bg-red-50 hover:text-red-500 rounded transition-all" title="Desactivar"><span class="material-symbols-outlined text-xl">block</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-9 rounded-full bg-amber-50 dark:bg-amber-900/20 text-primary flex items-center justify-center font-bold text-xs border border-primary/20">ED</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-[#1a1c21] dark:text-white">Emily Davis</span>
+<span class="text-xs text-gray-500 font-medium">e.davis@corp-hq.com</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">Admin</span>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-gray-600 dark:text-gray-400">Corporate HQ</td>
+<td class="px-6 py-4 text-sm text-gray-500">Hace 3 días</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-1 text-gray-400">
+<button class="p-1.5 hover:bg-amber-50 hover:text-primary rounded transition-all" title="Editar"><span class="material-symbols-outlined text-xl">edit_square</span></button>
+<button class="p-1.5 hover:bg-amber-50 hover:text-primary rounded transition-all" title="Resetear contraseña"><span class="material-symbols-outlined text-xl">lock_reset</span></button>
+<button class="p-1.5 hover:bg-red-50 hover:text-red-500 rounded transition-all" title="Desactivar"><span class="material-symbols-outlined text-xl">block</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-9 rounded-full bg-teal-50 dark:bg-teal-900/20 text-teal-600 flex items-center justify-center font-bold text-xs border border-teal-200 dark:border-teal-800">RW</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-[#1a1c21] dark:text-white">Robert Wilson</span>
+<span class="text-xs text-gray-500 font-medium">robert@tech-sol.io</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">Cliente</span>
+</td>
+<td class="px-6 py-4 text-sm font-medium text-gray-600 dark:text-gray-400">Tech Solutions</td>
+<td class="px-6 py-4 text-sm font-bold text-teal-600 dark:text-teal-500 flex items-center gap-1.5">
+<span class="size-1.5 rounded-full bg-teal-500 animate-pulse"></span>
+                                    Activo ahora
+                                </td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-1 text-gray-400">
+<button class="p-1.5 hover:bg-amber-50 hover:text-primary rounded transition-all" title="Editar"><span class="material-symbols-outlined text-xl">edit_square</span></button>
+<button class="p-1.5 hover:bg-amber-50 hover:text-primary rounded transition-all" title="Resetear contraseña"><span class="material-symbols-outlined text-xl">lock_reset</span></button>
+<button class="p-1.5 hover:bg-red-50 hover:text-red-500 rounded transition-all" title="Desactivar"><span class="material-symbols-outlined text-xl">block</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-5 border-t border-[#e2e8f0] dark:border-gray-800 bg-gray-50/30 dark:bg-transparent flex items-center justify-between">
+<span class="text-xs font-semibold text-[#64748b] dark:text-gray-400 uppercase tracking-wide">Mostrando 1 a 5 de 24 entradas</span>
+<div class="flex items-center gap-1.5">
+<button class="px-3 py-1.5 flex items-center justify-center rounded border border-[#e2e8f0] dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-500 hover:bg-gray-50 transition-colors">
+<span class="material-symbols-outlined text-lg">chevron_left</span>
+</button>
+<button class="px-3.5 py-1.5 flex items-center justify-center rounded bg-primary text-white text-xs font-extrabold shadow-sm">1</button>
+<button class="px-3.5 py-1.5 flex items-center justify-center rounded border border-[#e2e8f0] dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 text-xs font-bold hover:bg-gray-50 transition-colors">2</button>
+<button class="px-3.5 py-1.5 flex items-center justify-center rounded border border-[#e2e8f0] dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 text-xs font-bold hover:bg-gray-50 transition-colors">3</button>
+<span class="px-2 text-gray-400 text-xs font-bold">...</span>
+<button class="px-3 py-1.5 flex items-center justify-center rounded border border-[#e2e8f0] dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-500 hover:bg-gray-50 transition-colors">
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+<div class="bg-white dark:bg-[#15181e] p-5 rounded-xl border border-[#e2e8f0] dark:border-gray-800 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-lg bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl">group</span>
+</div>
+<div>
+<p class="text-xs font-bold text-[#64748b] uppercase tracking-wider">Total Usuarios</p>
+<p class="text-xl font-black">1,284</p>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-[#15181e] p-5 rounded-xl border border-[#e2e8f0] dark:border-gray-800 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-lg bg-teal-50 dark:bg-teal-900/20 flex items-center justify-center text-teal-600">
+<span class="material-symbols-outlined text-2xl">person_check</span>
+</div>
+<div>
+<p class="text-xs font-bold text-[#64748b] uppercase tracking-wider">Activos Hoy</p>
+<p class="text-xl font-black">412</p>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-[#15181e] p-5 rounded-xl border border-[#e2e8f0] dark:border-gray-800 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600">
+<span class="material-symbols-outlined text-2xl">badge</span>
+</div>
+<div>
+<p class="text-xs font-bold text-[#64748b] uppercase tracking-wider">Cuentas Clientes</p>
+<p class="text-xl font-black">86</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

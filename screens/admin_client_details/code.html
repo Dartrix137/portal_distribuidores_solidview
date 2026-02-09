@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Detalle de Cliente | Solidview</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#E98D04",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            .material-symbols-outlined {
+                font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            }
+            input:focus, select:focus {
+                border-color: #E98D04 !important;
+                --tw-ring-color: #E98D04 !important;
+                outline: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#111418] dark:text-white min-h-screen">
+<div class="flex min-h-screen">
+<aside class="w-64 border-r border-[#f0f2f4] dark:border-gray-800 bg-white dark:bg-background-dark hidden lg:flex flex-col">
+<div class="p-6 flex flex-col h-full">
+<div class="flex gap-3 items-center mb-8">
+<img alt="Solidview Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApoQURHpYazLpzg6FKcGLcUFcUtouPf02Codfi6Eg3eVZLSEc8_TVfrFjOsFUcWeBhzGADrb-X7m4BnLF56xnbGCmvGexRbdXSSchaEEU7sSj0EJX5a5V3VC94ukqhSbwfZc8wKU_Sn24zd0voJltlxuhvsY-qbJpkEl2ewSuivrxMoXYg8W8Y57pZwuGIyYKKE20ubBTi0CBAiWBWZkWsH9W8UBG8afV_bSAbVJ78Z0L26yPiP2SN6DyvonbufdOcaHejKVoGHfq6"/>
+</div>
+<nav class="flex flex-col gap-1 grow">
+<a class="flex items-center gap-3 px-3 py-2 text-[#617589] hover:bg-[#f0f2f4] dark:hover:bg-gray-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 bg-primary/10 text-primary rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="text-sm font-medium">Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#617589] hover:bg-[#f0f2f4] dark:hover:bg-gray-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">hub</span>
+<span class="text-sm font-medium">Equipos de Venta</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-[#617589] hover:bg-[#f0f2f4] dark:hover:bg-gray-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-sm font-medium">Reportes</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-[#f0f2f4] dark:border-gray-800">
+<a class="flex items-center gap-3 px-3 py-2 text-[#617589] hover:bg-[#f0f2f4] dark:hover:bg-gray-800 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Configuración</span>
+</a>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col">
+<header class="flex items-center justify-between h-16 border-b border-[#f0f2f4] dark:border-gray-800 bg-white dark:bg-background-dark px-8 sticky top-0 z-10">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2 text-primary">
+<img alt="Solidview Logo" class="h-6 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRmmfpt_55zIPuQCl9dXPMjK6fYOCj5DgGxmKCa_8RHsK0Ut_3SYgcedhsQt8V0wOXPEGqoptjjNPwk-G_ppVy8uDYgE2iPhYwjhXQ8Ei1DlNXXFY2zeS5YV6zt7KG620vTefwx1snxDTwoLOk0mDuFmPKB770J6I_YJOvTyJIENbss4AQeLlB_SPzi4KI4op7-ueh8X5JOaHE_Vyd0J41AYmOr2Lsao17SWW-i0aHt1J8muI0TZouNWSjswRQd0q2FCmfgot1axHg"/>
+</div>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-[#111418] dark:text-white text-sm font-semibold border-b-2 border-primary h-16 flex items-center" href="#">Editor de Clientes</a>
+<a class="text-[#617589] dark:text-gray-400 text-sm font-medium" href="#">Historial</a>
+<a class="text-[#617589] dark:text-gray-400 text-sm font-medium" href="#">Auditoría</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#617589] text-xl">search</span>
+<input class="bg-[#f0f2f4] dark:bg-gray-800 border-none rounded-lg pl-10 pr-4 py-2 text-sm w-64 focus:ring-1 focus:ring-primary" placeholder="Buscar clientes..." type="text"/>
+</div>
+<button class="p-2 bg-[#f0f2f4] dark:bg-gray-800 rounded-lg text-[#111418] dark:text-white">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 bg-[#f0f2f4] dark:bg-gray-800 rounded-lg text-[#111418] dark:text-white">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<div class="p-8 max-w-5xl mx-auto w-full">
+<nav class="flex items-center gap-2 mb-4 text-sm font-medium">
+<a class="text-[#617589] hover:text-primary transition-colors" href="#">Clientes</a>
+<span class="text-[#617589]"><span class="material-symbols-outlined text-xs">chevron_right</span></span>
+<span class="text-[#111418] dark:text-white">Acme Corp</span>
+</nav>
+<div class="flex flex-wrap items-end justify-between gap-4 mb-8">
+<div>
+<h1 class="text-3xl font-black text-[#111418] dark:text-white tracking-tight mb-2">Detalle del Cliente</h1>
+<p class="text-[#617589] dark:text-gray-400 max-w-xl">Configure los objetivos de ingresos y metas financieras para esta cuenta corporativa. Los cambios se registran en el historial de auditoría.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 border border-[#d1d5db] dark:border-gray-700 rounded-lg text-sm font-bold bg-white dark:bg-gray-900 text-[#111418] dark:text-white hover:bg-gray-50 transition-colors">
+                        Descartar cambios
+                    </button>
+<button class="px-6 py-2 bg-primary text-white rounded-lg text-sm font-bold shadow-sm hover:brightness-110 transition-all">
+                        Guardar cambios
+                    </button>
+</div>
+</div>
+<div class="space-y-6">
+<section class="bg-white dark:bg-gray-900 border border-[#f0f2f4] dark:border-gray-800 rounded-xl overflow-hidden shadow-sm">
+<div class="px-6 py-4 border-b border-[#f0f2f4] dark:border-gray-800 flex justify-between items-center">
+<h2 class="text-lg font-bold text-[#111418] dark:text-white">Información Básica</h2>
+<span class="px-2.5 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-bold uppercase tracking-wider">Cuenta Activa</span>
+</div>
+<div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-[#617589] uppercase tracking-wider">Nombre de la Entidad Legal</label>
+<input class="w-full bg-[#f6f7f8] dark:bg-gray-800/50 border-transparent rounded-lg focus:border-primary focus:ring-1 focus:ring-primary text-sm font-medium px-4 py-2.5" type="text" value="Acme Corporation Ltd."/>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-[#617589] uppercase tracking-wider">Sector Industrial</label>
+<select class="w-full bg-[#f6f7f8] dark:bg-gray-800/50 border-transparent rounded-lg focus:border-primary focus:ring-1 focus:ring-primary text-sm font-medium px-4 py-2.5">
+<option>Manufactura y Hardware</option>
+<option>Software y SaaS</option>
+<option>Servicios Financieros</option>
+<option>Retail</option>
+</select>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-[#617589] uppercase tracking-wider">Gerente de Cuenta Clave (KAM)</label>
+<div class="flex items-center gap-3 px-4 py-2 bg-[#f6f7f8] dark:bg-gray-800/50 rounded-lg border border-transparent">
+<div class="size-6 bg-primary/20 text-primary flex items-center justify-center rounded-full text-[10px] font-bold">JD</div>
+<span class="text-sm font-medium">Jane Doe</span>
+<span class="material-symbols-outlined text-sm text-[#617589] ml-auto">swap_horiz</span>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="text-xs font-bold text-[#617589] uppercase tracking-wider">Región</label>
+<input class="w-full bg-[#f6f7f8] dark:bg-gray-800/50 border-transparent rounded-lg focus:border-primary focus:ring-1 focus:ring-primary text-sm font-medium px-4 py-2.5" type="text" value="Norteamérica (Global HQ)"/>
+</div>
+</div>
+</section>
+<section class="bg-white dark:bg-gray-900 border border-[#f0f2f4] dark:border-gray-800 rounded-xl overflow-hidden shadow-sm">
+<div class="px-6 py-4 border-b border-[#f0f2f4] dark:border-gray-800">
+<h2 class="text-lg font-bold text-[#111418] dark:text-white">Objetivos de Ingresos (FY 2024)</h2>
+</div>
+<div class="p-6 space-y-8">
+<div class="max-w-md">
+<label class="block text-xs font-bold text-[#617589] uppercase tracking-wider mb-2">Objetivo Anual</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gray-400">$</span>
+<input class="w-full pl-8 pr-4 py-3 bg-[#f6f7f8] dark:bg-gray-800/50 border-2 border-transparent rounded-lg focus:border-primary focus:ring-1 focus:ring-primary text-xl font-black text-primary" type="text" value="12,500,000.00"/>
+</div>
+<p class="mt-2 text-[11px] text-[#617589]">Establezca el objetivo total para el año fiscal. El desglose trimestral debe sumar este monto.</p>
+</div>
+<hr class="border-[#f0f2f4] dark:border-gray-800"/>
+<div>
+<h3 class="text-sm font-bold text-[#111418] dark:text-white mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">calendar_month</span>
+                                Metas Trimestrales
+                            </h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="p-4 bg-white dark:bg-gray-800 border border-[#f0f2f4] dark:border-gray-700 rounded-lg">
+<label class="block text-[10px] font-bold text-[#617589] uppercase mb-2">Meta Q1 (Ene-Mar)</label>
+<div class="relative">
+<span class="absolute left-0 top-1/2 -translate-y-1/2 text-xs text-gray-400">$</span>
+<input class="w-full pl-3 pr-0 py-1 bg-transparent border-0 border-b border-gray-200 dark:border-gray-600 focus:border-primary focus:ring-0 text-base font-bold text-[#111418] dark:text-white" type="text" value="3,125,000"/>
+</div>
+</div>
+<div class="p-4 bg-white dark:bg-gray-800 border border-[#f0f2f4] dark:border-gray-700 rounded-lg">
+<label class="block text-[10px] font-bold text-[#617589] uppercase mb-2">Meta Q2 (Abr-Jun)</label>
+<div class="relative">
+<span class="absolute left-0 top-1/2 -translate-y-1/2 text-xs text-gray-400">$</span>
+<input class="w-full pl-3 pr-0 py-1 bg-transparent border-0 border-b border-gray-200 dark:border-gray-600 focus:border-primary focus:ring-0 text-base font-bold text-[#111418] dark:text-white" type="text" value="3,125,000"/>
+</div>
+</div>
+<div class="p-4 bg-white dark:bg-gray-800 border border-[#f0f2f4] dark:border-gray-700 rounded-lg">
+<label class="block text-[10px] font-bold text-[#617589] uppercase mb-2">Meta Q3 (Jul-Sep)</label>
+<div class="relative">
+<span class="absolute left-0 top-1/2 -translate-y-1/2 text-xs text-gray-400">$</span>
+<input class="w-full pl-3 pr-0 py-1 bg-transparent border-0 border-b border-gray-200 dark:border-gray-600 focus:border-primary focus:ring-0 text-base font-bold text-[#111418] dark:text-white" type="text" value="3,125,000"/>
+</div>
+</div>
+<div class="p-4 bg-white dark:bg-gray-800 border border-[#f0f2f4] dark:border-gray-700 rounded-lg">
+<label class="block text-[10px] font-bold text-[#617589] uppercase mb-2">Meta Q4 (Oct-Dic)</label>
+<div class="relative">
+<span class="absolute left-0 top-1/2 -translate-y-1/2 text-xs text-gray-400">$</span>
+<input class="w-full pl-3 pr-0 py-1 bg-transparent border-0 border-b border-gray-200 dark:border-gray-600 focus:border-primary focus:ring-0 text-base font-bold text-[#111418] dark:text-white" type="text" value="3,125,000"/>
+</div>
+</div>
+</div>
+<div class="mt-6 p-4 bg-primary/5 rounded-lg border border-primary/20 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+<span class="text-sm font-medium text-[#111418] dark:text-white">Total Asignado: <span class="font-bold">$12,500,000</span></span>
+</div>
+<div class="text-xs text-[#617589] font-medium">
+                                    Estado: <span class="text-green-600 font-bold uppercase">Balanceado</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<footer class="flex items-center justify-between py-4 text-[11px] text-[#617589] font-medium">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">history</span>
+                        Última edición por Admin (S. Peterson) el 12 de oct. de 2023 a las 14:45
+                    </div>
+<a class="text-primary hover:underline flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-sm">visibility</span>
+                        Ver historial completo de auditoría
+                    </a>
+</footer>
+</div>
+<div class="mt-12 lg:hidden">
+<button class="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg shadow-primary/30 hover:brightness-110">
+                    Guardar todos los cambios
+                </button>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>
