@@ -27,7 +27,7 @@ Un portal moderno y eficiente para la gestión de ventas y distribución B2B, di
 
 1.  **Clonar el repositorio**
     ```bash
-    git clone https://github.com/TU_USUARIO/NOMBRE_REPO.git
+    git clone https://github.com/Dartrix137/portal_distribuidores_solidview.git
     cd portal_distribuidores_solidview
     ```
 
