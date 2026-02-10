@@ -234,9 +234,6 @@ const SalesEntryPage = () => {
                                     <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider">
                                         Valor de Venta
                                     </th>
-                                    <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider">
-                                        Estado
-                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">

@@ -146,13 +146,8 @@ const LoginPage = () => {
             </main>
 
             {/* Footer */}
-            <footer className="py-6 px-10 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4 text-text-secondary text-xs">
-                <div className="flex gap-6">
-                    <a href="#" className="hover:text-text-primary transition-colors">Política de Privacidad</a>
-                    <a href="#" className="hover:text-text-primary transition-colors">Términos de Servicio</a>
-                    <a href="#" className="hover:text-text-primary transition-colors">Seguridad</a>
-                </div>
-                <p>© 2024 Solidview. Todos los derechos reservados.</p>
+            <footer className="py-6 px-10 border-t border-gray-200 flex flex-col md:flex-row justify-center items-center gap-4 text-text-secondary text-xs">
+                <p>© 2026. Todos los derechos reservados.</p>
             </footer>
         </div>
     )

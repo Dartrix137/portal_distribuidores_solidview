@@ -208,11 +208,114 @@ const DashboardPage = () => {
                         </p>
                     </div>
                 </div>
+
+                {/* Reglas de Comisión */}
+                <div className="mt-8">
+                    <h3 className="text-xl font-bold text-text-primary mb-4 flex items-center gap-2">
+                        <span className="material-symbols-outlined text-primary">payments</span>
+                        Reglas de Comisión
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        {/* Tier 1 */}
+                        <div className={`relative rounded-xl p-6 border-2 transition-all duration-300 ${porcentajeAnual >= 80 && porcentajeAnual <= 89
+                            ? 'border-amber-400 bg-amber-50 shadow-lg shadow-amber-100'
+                            : 'border-gray-200 bg-white'
+                            }`}>
+                            {porcentajeAnual >= 80 && porcentajeAnual <= 89 && (
+                                <div className="absolute -top-2.5 left-4 bg-amber-500 text-white text-[9px] px-2.5 py-0.5 rounded font-black uppercase tracking-wider">
+                                    Tu nivel actual
+                                </div>
+                            )}
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${porcentajeAnual >= 80 && porcentajeAnual <= 89
+                                    ? 'bg-amber-500 text-white'
+                                    : 'bg-gray-100 text-gray-400'
+                                    }`}>
+                                    <span className="material-symbols-outlined text-xl">trending_up</span>
+                                </div>
+                                <div>
+                                    <p className="text-2xl font-black text-text-primary">1%</p>
+                                    <p className="text-[10px] uppercase tracking-wider font-bold text-text-secondary">sobre facturación</p>
+                                </div>
+                            </div>
+                            <div className={`text-sm font-semibold rounded-lg py-2 px-3 text-center ${porcentajeAnual >= 80 && porcentajeAnual <= 89
+                                ? 'bg-amber-100 text-amber-700'
+                                : 'bg-gray-50 text-text-secondary'
+                                }`}>
+                                80% – 89% de cumplimiento
+                            </div>
+                        </div>
+
+                        {/* Tier 2 */}
+                        <div className={`relative rounded-xl p-6 border-2 transition-all duration-300 ${porcentajeAnual >= 90 && porcentajeAnual <= 109
+                            ? 'border-blue-400 bg-blue-50 shadow-lg shadow-blue-100'
+                            : 'border-gray-200 bg-white'
+                            }`}>
+                            {porcentajeAnual >= 90 && porcentajeAnual <= 109 && (
+                                <div className="absolute -top-2.5 left-4 bg-blue-500 text-white text-[9px] px-2.5 py-0.5 rounded font-black uppercase tracking-wider">
+                                    Tu nivel actual
+                                </div>
+                            )}
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${porcentajeAnual >= 90 && porcentajeAnual <= 109
+                                    ? 'bg-blue-500 text-white'
+                                    : 'bg-gray-100 text-gray-400'
+                                    }`}>
+                                    <span className="material-symbols-outlined text-xl">rocket_launch</span>
+                                </div>
+                                <div>
+                                    <p className="text-2xl font-black text-text-primary">2%</p>
+                                    <p className="text-[10px] uppercase tracking-wider font-bold text-text-secondary">sobre facturación</p>
+                                </div>
+                            </div>
+                            <div className={`text-sm font-semibold rounded-lg py-2 px-3 text-center ${porcentajeAnual >= 90 && porcentajeAnual <= 109
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'bg-gray-50 text-text-secondary'
+                                }`}>
+                                90% – 109% de cumplimiento
+                            </div>
+                        </div>
+
+                        {/* Tier 3 */}
+                        <div className={`relative rounded-xl p-6 border-2 transition-all duration-300 ${porcentajeAnual >= 110
+                            ? 'border-emerald-400 bg-emerald-50 shadow-lg shadow-emerald-100'
+                            : 'border-gray-200 bg-white'
+                            }`}>
+                            {porcentajeAnual >= 110 && (
+                                <div className="absolute -top-2.5 left-4 bg-emerald-500 text-white text-[9px] px-2.5 py-0.5 rounded font-black uppercase tracking-wider">
+                                    Tu nivel actual
+                                </div>
+                            )}
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${porcentajeAnual >= 110
+                                    ? 'bg-emerald-500 text-white'
+                                    : 'bg-gray-100 text-gray-400'
+                                    }`}>
+                                    <span className="material-symbols-outlined text-xl">emoji_events</span>
+                                </div>
+                                <div>
+                                    <p className="text-2xl font-black text-text-primary">3%</p>
+                                    <p className="text-[10px] uppercase tracking-wider font-bold text-text-secondary">sobre facturación</p>
+                                </div>
+                            </div>
+                            <div className={`text-sm font-semibold rounded-lg py-2 px-3 text-center ${porcentajeAnual >= 110
+                                ? 'bg-emerald-100 text-emerald-700'
+                                : 'bg-gray-50 text-text-secondary'
+                                }`}>
+                                &gt;110% de cumplimiento
+                            </div>
+                        </div>
+                    </div>
+                    <p className="text-xs text-text-secondary mt-3 italic">
+                        <span className="material-symbols-outlined text-xs align-middle mr-1">info</span>
+                        Las comisiones se calculan sobre el total de facturación del período y están sujetas a las políticas comerciales vigentes.
+                    </p>
+                </div>
             </main>
 
             {/* Footer */}
             <footer className="py-8 text-center text-text-secondary text-xs border-t border-gray-100">
-                <p>© 2024 Solidview. Información corporativa confidencial. Todos los derechos reservados.</p>
+                <p>© 2026. Todos los derechos reservados.</p>
             </footer>
         </div>
     )

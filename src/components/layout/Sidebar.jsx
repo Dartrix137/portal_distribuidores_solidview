@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext'
 import { getInitials } from '../../utils/formatters'
 import logo from '../../assets/logo.webp'
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
     const { user, logout } = useAuth()
     const navigate = useNavigate()
 
@@ -12,24 +12,31 @@ const Sidebar = () => {
         navigate('/login')
     }
 
-    const navItems = [
-        { path: '/admin/clientes', icon: 'group', label: 'Clientes' },
-        { path: '/admin/ventas', icon: 'cloud_upload', label: 'Carga de Ventas' },
-        { path: '/admin/usuarios', icon: 'person', label: 'Usuarios' },
-    ]
+    const handleNavClick = () => {
+        if (onClose) onClose()
+    }
 
-    return (
+    const sidebarContent = (
         <aside className="w-64 flex-shrink-0 border-r border-gray-200 bg-white h-full flex flex-col justify-between p-4">
             <div className="flex flex-col gap-8">
                 {/* Logo */}
-                <div className="flex items-center px-2">
+                <div className="flex items-center justify-between px-2">
                     <img src={logo} alt="Solidview Logo" className="h-10 w-auto" />
+                    {/* Close button — mobile only */}
+                    <button
+                        onClick={onClose}
+                        className="md:hidden p-1 rounded-lg text-text-secondary hover:bg-gray-100 transition-colors"
+                        aria-label="Cerrar menú"
+                    >
+                        <span className="material-symbols-outlined">close</span>
+                    </button>
                 </div>
 
                 {/* Navigation */}
                 <nav className="flex flex-col gap-1">
                     <NavLink
                         to="/admin/clientes"
+                        onClick={handleNavClick}
                         className={({ isActive }) =>
                             `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive
                                 ? 'bg-primary/10 text-primary'
@@ -51,6 +58,7 @@ const Sidebar = () => {
 
                     <NavLink
                         to="/admin/ventas"
+                        onClick={handleNavClick}
                         className={({ isActive }) =>
                             `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive
                                 ? 'bg-primary/10 text-primary'
@@ -72,6 +80,7 @@ const Sidebar = () => {
 
                     <NavLink
                         to="/admin/usuarios"
+                        onClick={handleNavClick}
                         className={({ isActive }) =>
                             `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive
                                 ? 'bg-primary/10 text-primary'
@@ -113,6 +122,34 @@ const Sidebar = () => {
                 </div>
             </div>
         </aside>
+    )
+
+    return (
+        <>
+            {/* Desktop sidebar — always visible */}
+            <div className="hidden md:block h-full">
+                {sidebarContent}
+            </div>
+
+            {/* Mobile drawer */}
+            <div className="md:hidden">
+                {/* Overlay */}
+                {isOpen && (
+                    <div
+                        className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm transition-opacity"
+                        onClick={onClose}
+                    />
+                )}
+
+                {/* Sliding panel */}
+                <div
+                    className={`fixed inset-y-0 left-0 z-40 w-64 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'
+                        }`}
+                >
+                    {sidebarContent}
+                </div>
+            </div>
+        </>
     )
 }
 
