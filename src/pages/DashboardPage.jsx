@@ -67,9 +67,9 @@ const DashboardPage = () => {
                             onChange={(e) => setSelectedYear(Number(e.target.value))}
                             className="form-input-base w-32 py-2 text-sm font-bold text-text-primary"
                         >
+                            <option value={2026}>2026</option>
+                            <option value={2025}>2025</option>
                             <option value={2024}>2024</option>
-                            <option value={2023}>2023</option>
-                            <option value={2022}>2022</option>
                         </select>
                     </div>
                 </div>

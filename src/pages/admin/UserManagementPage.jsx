@@ -30,7 +30,7 @@ const UserManagementPage = () => {
             breadcrumb="Gestión de Usuarios"
             actions={
                 <>
-                    <div className="relative min-w-64">
+                    <div className="relative w-36 md:w-64">
                         <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary text-xl">
                             search
                         </span>
@@ -47,7 +47,7 @@ const UserManagementPage = () => {
                         className="bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg flex items-center gap-2 hover:brightness-110 transition-all shadow-sm"
                     >
                         <span className="material-symbols-outlined text-lg">add</span>
-                        Nuevo Usuario
+                        <span className="hidden md:inline">Nuevo Usuario</span>
                     </button>
                 </>
             }
