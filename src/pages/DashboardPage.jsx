@@ -22,6 +22,13 @@ const DashboardPage = () => {
     const faltanteAnual = distribuidor.objetivoAnual - ventaAnual
     const estadoAnual = getMensajeEstado(porcentajeAnual)
 
+    // Current Quarter Data
+    const currentQuarterKey = Object.keys(distribuidor.trimestres).find(q => distribuidor.trimestres[q].enCurso)
+    const currentQuarter = currentQuarterKey ? distribuidor.trimestres[currentQuarterKey] : null
+    const qPorcentaje = currentQuarter ? calcularPorcentajeCumplimiento(currentQuarter.venta, currentQuarter.meta) : 0
+    const qFaltante = currentQuarter ? currentQuarter.meta - currentQuarter.venta : 0
+    const qEstado = currentQuarter ? getMensajeEstado(qPorcentaje) : null
+
     const handleLogout = () => {
         logout()
         navigate('/login')
@@ -114,6 +121,96 @@ const DashboardPage = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* Current Quarter Progress Section */}
+                {currentQuarter && (
+                    <div className="card p-8 mb-8 border-l-4 border-l-primary relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-5">
+                            <span className="material-symbols-outlined text-9xl text-primary transform rotate-12 select-none">
+                                calendar_today
+                            </span>
+                        </div>
+
+                        <div className="relative z-10">
+                            <div className="flex justify-between items-start mb-6">
+                                <div>
+                                    <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-primary">timelapse</span>
+                                        Objetivo Trimestral Actual ({currentQuarterKey})
+                                    </h3>
+                                    <p className="text-sm text-text-secondary mt-1">
+                                        Seguimiento en tiempo real del trimestre en curso
+                                    </p>
+                                </div>
+                                <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider flex items-center gap-1">
+                                    <span className="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+                                    En Curso
+                                </div>
+                            </div>
+
+                            <div className="grid md:grid-cols-2 gap-8 items-center">
+                                <div>
+                                    <div className="flex items-baseline gap-2 mb-2">
+                                        <span className="text-4xl font-black text-text-primary">
+                                            {formatCurrency(currentQuarter.venta, { compact: true })}
+                                        </span>
+                                        <span className="text-slate-400 text-lg font-medium">
+                                            / {formatCurrency(currentQuarter.meta, { compact: true })} Meta
+                                        </span>
+                                    </div>
+
+                                    {currentQuarter.proyectado > 0 && (
+                                        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-100">
+                                            <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">Proyección de cierre:</span>
+                                            <span className="font-bold text-text-primary">
+                                                {formatCurrency(currentQuarter.proyectado, { compact: true })}
+                                            </span>
+                                            <span className={`text-xs font-bold ${currentQuarter.proyectado >= currentQuarter.meta ? 'text-emerald-600' : 'text-amber-600'}`}>
+                                                ({Math.round((currentQuarter.proyectado / currentQuarter.meta) * 100)}%)
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="space-y-3">
+                                    <div className="flex justify-between items-end">
+                                        <span className="text-sm font-semibold text-text-primary">Progreso del trimestre</span>
+                                        <span className={`font-black text-lg ${qEstado.tipo === 'success' ? 'text-emerald-600' : qEstado.tipo === 'warning' ? 'text-amber-600' : 'text-primary'}`}>
+                                            {qPorcentaje}%
+                                        </span>
+                                    </div>
+
+                                    <div className="h-4 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner">
+                                        <div
+                                            className={`h-full rounded-full transition-all duration-1000 relative ${qEstado.tipo === 'success' ? 'bg-emerald-500' : 'bg-primary'}`}
+                                            style={{ width: `${Math.min(qPorcentaje, 100)}%` }}
+                                        >
+                                            <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex justify-between items-center text-sm">
+                                        <span className="text-text-secondary">
+                                            {qFaltante > 0 ? (
+                                                <>Faltante: <span className="font-semibold text-text-primary">{formatCurrency(qFaltante)}</span></>
+                                            ) : (
+                                                <span className="text-emerald-600 font-bold flex items-center gap-1">
+                                                    <span className="material-symbols-outlined text-sm">check_circle</span>
+                                                    Meta superada por {formatCurrency(Math.abs(qFaltante))}
+                                                </span>
+                                            )}
+                                        </span>
+                                        <span className={`font-bold italic ${qEstado.tipo === 'success' ? 'text-emerald-600' :
+                                            qEstado.tipo === 'warning' ? 'text-amber-600' : 'text-red-500'
+                                            }`}>
+                                            {qEstado.mensaje}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Quarterly Goals Section */}
                 <div className="flex items-center justify-between mb-6">
