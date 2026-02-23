@@ -1,11 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import AdminLayout from '../../components/layout/AdminLayout'
-import { mockDistribuidores } from '../../constants/mockDistribuidores'
-import { mockVentas, addVenta } from '../../constants/mockVentas'
-import { formatCurrency, formatDate, getPeriodLabel } from '../../utils/formatters'
+import { distribuidorService } from '../../services/distribuidorService'
+import { ventasService } from '../../services/ventasService'
+import { formatCurrency, formatDate } from '../../utils/formatters'
 
 const SalesEntryPage = () => {
-    const [ventas, setVentas] = useState(mockVentas)
+    const [distribuidores, setDistribuidores] = useState([])
+    const [ventas, setVentas] = useState([])
+    const [loadingData, setLoadingData] = useState(true)
     const [formData, setFormData] = useState({
         distribuidorId: '',
         anio: new Date().getFullYear().toString(),
@@ -15,20 +17,38 @@ const SalesEntryPage = () => {
     })
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
+    const [error, setError] = useState('')
+
+    useEffect(() => {
+        loadData()
+    }, [])
+
+    const loadData = async () => {
+        try {
+            setLoadingData(true)
+            const [distData, ventasData] = await Promise.all([
+                distribuidorService.getAll(),
+                ventasService.getAll(),
+            ])
+            setDistribuidores(distData)
+            setVentas(ventasData)
+        } catch (err) {
+            console.error('Error cargando datos:', err)
+        } finally {
+            setLoadingData(false)
+        }
+    }
 
     const handleChange = (field, value) => {
         setFormData(prev => {
             const newState = { ...prev, [field]: value }
 
-            // Logic: Year Change -> Reset Quarter to Q1 (or current if current year)
             if (field === 'anio') {
                 newState.trimestre = 'Q1'
                 newState.semana = '1'
             }
 
-            // Logic: Quarter Change -> Reset Week to first of that quarter
             if (field === 'trimestre') {
-                // We'll calculate the available weeks later, but reset to first available
                 const startWeek = {
                     'Q1': 1, 'Q2': 14, 'Q3': 27, 'Q4': 40
                 }[value] || 1
@@ -53,36 +73,45 @@ const SalesEntryPage = () => {
 
     const availableWeeks = getWeeksForQuarter(formData.trimestre)
 
+    // Generate year options dynamically
+    const currentYear = new Date().getFullYear()
+    const yearOptions = [currentYear, currentYear - 1, currentYear - 2]
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         if (!formData.distribuidorId || !formData.monto) return
 
         setLoading(true)
+        setError('')
 
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 500))
+        try {
+            const newVenta = await ventasService.create({
+                distribuidor_id: formData.distribuidorId,
+                trimestre: formData.trimestre,
+                semana: parseInt(formData.semana),
+                monto: parseFloat(formData.monto),
+                fecha: new Date().toISOString().split('T')[0],
+            })
 
-        const distribuidor = mockDistribuidores.find(d => d.id === formData.distribuidorId)
-        const newVenta = {
-            distribuidorId: formData.distribuidorId,
-            clienteNombre: distribuidor?.nombreCorto || 'Cliente',
-            fecha: new Date().toISOString().split('T')[0],
-            hora: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase(),
-            trimestre: formData.trimestre,
-            semana: parseInt(formData.semana),
-            anio: parseInt(formData.anio),
-            monto: parseFloat(formData.monto),
-            estado: 'pendiente',
+            // Enriquecer con nombre del distribuidor para la tabla
+            const dist = distribuidores.find(d => d.id === formData.distribuidorId)
+            const enrichedVenta = {
+                ...newVenta,
+                distribuidores: { id: dist?.id, nombre: dist?.nombre || 'Cliente' },
+            }
+
+            setVentas(prev => [enrichedVenta, ...prev])
+
+            // Reset form
+            setFormData(prev => ({ ...prev, distribuidorId: '', monto: '' }))
+            setSuccess(true)
+            setTimeout(() => setSuccess(false), 3000)
+        } catch (err) {
+            console.error('Error registrando venta:', err)
+            setError(err.message || 'Error al registrar la venta')
+        } finally {
+            setLoading(false)
         }
-
-        const added = addVenta(newVenta)
-        setVentas([added, ...ventas])
-
-        // Reset form
-        setFormData(prev => ({ ...prev, distribuidorId: '', monto: '' }))
-        setLoading(false)
-        setSuccess(true)
-        setTimeout(() => setSuccess(false), 3000)
     }
 
     return (
@@ -105,6 +134,11 @@ const SalesEntryPage = () => {
                     <h3 className="text-lg font-bold text-text-primary">Nueva entrada de datos de ventas</h3>
                 </div>
                 <form onSubmit={handleSubmit} className="p-6">
+                    {error && (
+                        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm mb-6">
+                            {error}
+                        </div>
+                    )}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                         <div>
                             <label className="block text-sm font-semibold text-text-primary mb-2">
@@ -115,10 +149,13 @@ const SalesEntryPage = () => {
                                 onChange={(e) => handleChange('distribuidorId', e.target.value)}
                                 className="form-input-base"
                                 required
+                                disabled={loadingData}
                             >
-                                <option value="">Seleccione cliente corporativo</option>
-                                {mockDistribuidores.map(d => (
-                                    <option key={d.id} value={d.id}>{d.nombreCorto}</option>
+                                <option value="">
+                                    {loadingData ? 'Cargando clientes...' : 'Seleccione cliente corporativo'}
+                                </option>
+                                {distribuidores.map(d => (
+                                    <option key={d.id} value={d.id}>{d.nombre}</option>
                                 ))}
                             </select>
                         </div>
@@ -131,9 +168,9 @@ const SalesEntryPage = () => {
                                 onChange={(e) => handleChange('anio', e.target.value)}
                                 className="form-input-base"
                             >
-                                <option value="2024">2024</option>
-                                <option value="2023">2023</option>
-                                <option value="2022">2022</option>
+                                {yearOptions.map(y => (
+                                    <option key={y} value={y}>{y}</option>
+                                ))}
                             </select>
                         </div>
                         <div>
@@ -211,66 +248,68 @@ const SalesEntryPage = () => {
             <div className="flex flex-col gap-4">
                 <div className="flex justify-between items-center px-2">
                     <h3 className="text-xl font-bold text-text-primary">Histórico de ventas</h3>
-                    <button className="text-primary text-sm font-semibold flex items-center gap-1 hover:underline">
-                        <span className="material-symbols-outlined text-lg">download</span>
-                        Exportar CSV
-                    </button>
                 </div>
 
-                <div className="card overflow-hidden">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="bg-gray-50 border-b border-gray-200">
-                                    <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider">
-                                        Fecha / Hora
-                                    </th>
-                                    <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider">
-                                        Cliente
-                                    </th>
-                                    <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider">
-                                        Periodo
-                                    </th>
-                                    <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider">
-                                        Valor de Venta
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200">
-                                {ventas.slice(0, 10).map((venta) => (
-                                    <tr key={venta.id} className="hover:bg-gray-50 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <p className="text-sm font-medium text-text-primary">
-                                                {formatDate(venta.fecha)}
-                                            </p>
-                                            <p className="text-xs text-text-secondary">{venta.hora}</p>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="text-sm font-semibold text-text-primary">
-                                                {venta.clienteNombre}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="bg-gray-100 text-gray-700 text-[11px] font-bold px-2 py-1 rounded">
-                                                {venta.anio} - {venta.trimestre}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm font-bold text-text-primary">
-                                            {formatCurrency(venta.monto)}
-                                        </td>
+                {loadingData ? (
+                    <div className="flex items-center justify-center py-8">
+                        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                ) : (
+                    <div className="card overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="bg-gray-50 border-b border-gray-200">
+                                        <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider">
+                                            Fecha
+                                        </th>
+                                        <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider">
+                                            Cliente
+                                        </th>
+                                        <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider">
+                                            Periodo
+                                        </th>
+                                        <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider">
+                                            Valor de Venta
+                                        </th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody className="divide-y divide-gray-200">
+                                    {ventas.slice(0, 15).map((venta) => (
+                                        <tr key={venta.id} className="hover:bg-gray-50 transition-colors">
+                                            <td className="px-6 py-4">
+                                                <p className="text-sm font-medium text-text-primary">
+                                                    {formatDate(venta.fecha)}
+                                                </p>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="text-sm font-semibold text-text-primary">
+                                                    {venta.distribuidores?.nombre || '—'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="bg-gray-100 text-gray-700 text-[11px] font-bold px-2 py-1 rounded">
+                                                    {venta.trimestre}
+                                                    {venta.semana ? ` / S${venta.semana}` : ''}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 text-sm font-bold text-text-primary">
+                                                {formatCurrency(venta.monto)}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        {ventas.length === 0 && (
+                            <div className="p-8 text-center text-text-secondary">
+                                No hay ventas registradas aún
+                            </div>
+                        )}
                     </div>
-                    <div className="p-4 border-t border-gray-200 flex justify-center">
-                        <button className="text-sm font-bold text-text-secondary hover:text-primary transition-colors">
-                            Ver todos los registros históricos
-                        </button>
-                    </div>
-                </div>
+                )}
             </div>
-        </AdminLayout >
+        </AdminLayout>
     )
 }
 

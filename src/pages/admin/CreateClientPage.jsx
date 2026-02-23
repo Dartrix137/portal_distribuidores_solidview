@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AdminLayout from '../../components/layout/AdminLayout'
+import { userService } from '../../services/userService'
 
 const SECTORES = [
     'Manufactura y Hardware',
@@ -16,8 +17,11 @@ const CreateClientPage = () => {
     const [formData, setFormData] = useState({
         nombre: '',
         sector: SECTORES[0],
+        email: '',
+        password: '',
     })
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState('')
 
     const handleChange = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }))
@@ -25,19 +29,41 @@ const CreateClientPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        setError('')
+
+        if (!formData.nombre.trim() || !formData.email.trim() || !formData.password.trim()) {
+            setError('Todos los campos son obligatorios')
+            return
+        }
+
+        if (formData.password.length < 6) {
+            setError('La contraseña debe tener al menos 6 caracteres')
+            return
+        }
+
         setLoading(true)
 
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        try {
+            // Crear usuario con rol distribuidor via Edge Function
+            // Esto creará el usuario en Auth, tabla users Y tabla distribuidores
+            await userService.createUser({
+                email: formData.email,
+                password: formData.password,
+                nombre: formData.nombre,
+                role: 'distribuidor',
+                region: formData.sector, // Usar sector como región
+            })
 
-        // In a real app we would save to DB
-        console.log('Creating client:', formData)
-
-        setLoading(false)
-        navigate('/admin/clientes')
+            navigate('/admin/clientes')
+        } catch (err) {
+            console.error('Error creando cliente:', err)
+            setError(err.message || 'Error al crear el cliente')
+        } finally {
+            setLoading(false)
+        }
     }
 
-    const isValid = formData.nombre.trim().length > 0
+    const isValid = formData.nombre.trim().length > 0 && formData.email.trim().length > 0 && formData.password.trim().length >= 6
 
     return (
         <AdminLayout
@@ -75,9 +101,15 @@ const CreateClientPage = () => {
                     </button>
                     <div>
                         <h2 className="text-2xl font-bold text-text-primary">Registrar Nuevo Cliente</h2>
-                        <p className="text-text-secondary">Ingrese los datos básicos del cliente corporativo</p>
+                        <p className="text-text-secondary">Ingrese los datos del nuevo cliente / distribuidor</p>
                     </div>
                 </div>
+
+                {error && (
+                    <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm mb-6">
+                        {error}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <section className="card overflow-hidden">
@@ -111,6 +143,41 @@ const CreateClientPage = () => {
                                         <option key={s} value={s}>{s}</option>
                                     ))}
                                 </select>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section className="card overflow-hidden">
+                        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                            <h3 className="text-lg font-bold text-text-primary">Credenciales de Acceso</h3>
+                        </div>
+                        <div className="p-6 space-y-6">
+                            <div>
+                                <label className="block text-sm font-semibold text-text-primary mb-2">
+                                    Correo electrónico
+                                </label>
+                                <input
+                                    type="email"
+                                    value={formData.email}
+                                    onChange={(e) => handleChange('email', e.target.value)}
+                                    className="form-input-base"
+                                    required
+                                    placeholder="usuario@empresa.com"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-text-primary mb-2">
+                                    Contraseña temporal
+                                </label>
+                                <input
+                                    type="password"
+                                    value={formData.password}
+                                    onChange={(e) => handleChange('password', e.target.value)}
+                                    className="form-input-base"
+                                    required
+                                    minLength={6}
+                                    placeholder="Mínimo 6 caracteres"
+                                />
                             </div>
                         </div>
                     </section>

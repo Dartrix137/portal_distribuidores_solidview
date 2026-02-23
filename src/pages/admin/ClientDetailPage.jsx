@@ -1,27 +1,23 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import AdminLayout from '../../components/layout/AdminLayout'
-import { mockDistribuidores, calcularVentaAnual, calcularPorcentajeCumplimiento } from '../../constants/mockDistribuidores'
+import { distribuidorService } from '../../services/distribuidorService'
+import { objetivosService } from '../../services/objetivosService'
+import { ventasService } from '../../services/ventasService'
 import { formatCurrency } from '../../utils/formatters'
-
-const SECTORES = [
-    'Manufactura y Hardware',
-    'Logística y Transporte',
-    'Software y SaaS',
-    'Servicios Financieros',
-    'Retail y Comercio',
-    'Telecomunicaciones',
-]
 
 const ClientDetailPage = () => {
     const { id } = useParams()
     const navigate = useNavigate()
 
-    const originalDistribuidor = mockDistribuidores.find(d => d.id === id)
+    const [distribuidor, setDistribuidor] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const [saving, setSaving] = useState(false)
+    const [error, setError] = useState(null)
 
     const [formData, setFormData] = useState({
         nombre: '',
-        sector: '',
+        region: '',
         objetivoAnual: 0,
         trimestres: {
             Q1: { meta: 0 },
@@ -32,28 +28,68 @@ const ClientDetailPage = () => {
     })
     const [hasChanges, setHasChanges] = useState(false)
     const [saved, setSaved] = useState(false)
+    const [ventaAnual, setVentaAnual] = useState(0)
+
+    const currentYear = new Date().getFullYear()
 
     useEffect(() => {
-        if (originalDistribuidor) {
+        loadClientData()
+    }, [id])
+
+    const loadClientData = async () => {
+        try {
+            setLoading(true)
+            setError(null)
+
+            const dist = await distribuidorService.getById(id)
+            setDistribuidor(dist)
+
+            // Cargar objetivos del año actual
+            const objetivos = await objetivosService.getByDistribuidor(id, currentYear)
+            const objMap = { Q1: 0, Q2: 0, Q3: 0, Q4: 0 }
+            objetivos.forEach((o) => {
+                objMap[o.trimestre] = parseFloat(o.meta)
+            })
+
+            // Cargar resumen de ventas
+            const resumen = await ventasService.getResumenTrimestral(id, currentYear)
+            const totalVentas = Object.values(resumen).reduce((sum, v) => sum + v, 0)
+            setVentaAnual(totalVentas)
+
             setFormData({
-                nombre: originalDistribuidor.nombre,
-                sector: originalDistribuidor.sector,
-                objetivoAnual: originalDistribuidor.objetivoAnual,
+                nombre: dist.nombre,
+                region: dist.region || '',
+                objetivoAnual: parseFloat(dist.objetivo_anual) || 0,
                 trimestres: {
-                    Q1: { meta: originalDistribuidor.trimestres.Q1.meta },
-                    Q2: { meta: originalDistribuidor.trimestres.Q2.meta },
-                    Q3: { meta: originalDistribuidor.trimestres.Q3.meta },
-                    Q4: { meta: originalDistribuidor.trimestres.Q4.meta },
+                    Q1: { meta: objMap.Q1 },
+                    Q2: { meta: objMap.Q2 },
+                    Q3: { meta: objMap.Q3 },
+                    Q4: { meta: objMap.Q4 },
                 },
             })
+        } catch (err) {
+            console.error('Error cargando cliente:', err)
+            setError('Cliente no encontrado')
+        } finally {
+            setLoading(false)
         }
-    }, [originalDistribuidor])
+    }
 
-    if (!originalDistribuidor) {
+    if (loading) {
+        return (
+            <AdminLayout breadcrumb="Cargando...">
+                <div className="flex items-center justify-center py-12">
+                    <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                </div>
+            </AdminLayout>
+        )
+    }
+
+    if (error || !distribuidor) {
         return (
             <AdminLayout breadcrumb="Error">
                 <div className="text-center py-12">
-                    <p className="text-text-secondary">Cliente no encontrado</p>
+                    <p className="text-text-secondary">{error || 'Cliente no encontrado'}</p>
                     <Link to="/admin/clientes" className="text-primary hover:underline mt-4 inline-block">
                         Volver a lista de clientes
                     </Link>
@@ -62,20 +98,22 @@ const ClientDetailPage = () => {
         )
     }
 
-    const ventaAnual = calcularVentaAnual(originalDistribuidor.trimestres)
-    const porcentaje = calcularPorcentajeCumplimiento(ventaAnual, originalDistribuidor.objetivoAnual)
+    const porcentaje =
+        formData.objetivoAnual > 0
+            ? Math.round((ventaAnual / formData.objetivoAnual) * 100)
+            : 0
     const sumaTrimestres = Object.values(formData.trimestres).reduce((sum, t) => sum + t.meta, 0)
     const validacion = sumaTrimestres === formData.objetivoAnual
 
     const handleChange = (field, value) => {
-        setFormData(prev => ({ ...prev, [field]: value }))
+        setFormData((prev) => ({ ...prev, [field]: value }))
         setHasChanges(true)
         setSaved(false)
     }
 
     const handleTrimestreChange = (quarter, value) => {
         const numValue = Number(value) || 0
-        setFormData(prev => ({
+        setFormData((prev) => ({
             ...prev,
             trimestres: {
                 ...prev.trimestres,
@@ -86,33 +124,45 @@ const ClientDetailPage = () => {
         setSaved(false)
     }
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (!validacion) return
-        // Mock save - in Phase 2 this would update Supabase
-        console.log('Guardando:', formData)
-        setHasChanges(false)
-        setSaved(true)
-        setTimeout(() => setSaved(false), 3000)
+        setSaving(true)
+
+        try {
+            // Actualizar datos del distribuidor
+            await distribuidorService.update(id, {
+                nombre: formData.nombre,
+                region: formData.region,
+                objetivo_anual: formData.objetivoAnual,
+            })
+
+            // Crear/actualizar objetivos trimestrales
+            await objetivosService.createYearObjectives(id, currentYear, {
+                Q1: formData.trimestres.Q1.meta,
+                Q2: formData.trimestres.Q2.meta,
+                Q3: formData.trimestres.Q3.meta,
+                Q4: formData.trimestres.Q4.meta,
+            })
+
+            setHasChanges(false)
+            setSaved(true)
+            setTimeout(() => setSaved(false), 3000)
+        } catch (err) {
+            console.error('Error guardando:', err)
+            alert('Error al guardar los cambios: ' + err.message)
+        } finally {
+            setSaving(false)
+        }
     }
 
     const handleDiscard = () => {
-        setFormData({
-            nombre: originalDistribuidor.nombre,
-            sector: originalDistribuidor.sector,
-            objetivoAnual: originalDistribuidor.objetivoAnual,
-            trimestres: {
-                Q1: { meta: originalDistribuidor.trimestres.Q1.meta },
-                Q2: { meta: originalDistribuidor.trimestres.Q2.meta },
-                Q3: { meta: originalDistribuidor.trimestres.Q3.meta },
-                Q4: { meta: originalDistribuidor.trimestres.Q4.meta },
-            },
-        })
+        loadClientData()
         setHasChanges(false)
     }
 
     return (
         <AdminLayout
-            breadcrumb={originalDistribuidor.nombreCorto}
+            breadcrumb={distribuidor.nombre}
             actions={
                 <div className="flex items-center gap-3">
                     {saved && (
@@ -130,10 +180,14 @@ const ClientDetailPage = () => {
                     </button>
                     <button
                         onClick={handleSave}
-                        disabled={!hasChanges || !validacion}
+                        disabled={!hasChanges || !validacion || saving}
                         className="px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
-                        <span className="material-symbols-outlined text-lg">save</span>
+                        {saving ? (
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                            <span className="material-symbols-outlined text-lg">save</span>
+                        )}
                         Guardar cambios
                     </button>
                 </div>
@@ -150,13 +204,21 @@ const ClientDetailPage = () => {
                     </button>
                     <div className="flex-1">
                         <div className="flex items-center gap-4 mb-2">
-                            <h2 className="text-2xl font-bold text-text-primary">{originalDistribuidor.nombre}</h2>
-                            <span className={`badge ${porcentaje >= 80 ? 'badge-success' : porcentaje >= 50 ? 'badge-warning' : 'badge-error'}`}>
+                            <h2 className="text-2xl font-bold text-text-primary">{distribuidor.nombre}</h2>
+                            <span
+                                className={`badge ${porcentaje >= 80
+                                        ? 'badge-success'
+                                        : porcentaje >= 50
+                                            ? 'badge-warning'
+                                            : 'badge-error'
+                                    }`}
+                            >
                                 {porcentaje}% cumplimiento
                             </span>
                         </div>
                         <p className="text-text-secondary">
-                            Venta actual: {formatCurrency(ventaAnual)} / {formatCurrency(originalDistribuidor.objetivoAnual)}
+                            Venta actual: {formatCurrency(ventaAnual)} /{' '}
+                            {formatCurrency(formData.objetivoAnual)}
                         </p>
                     </div>
                 </div>
@@ -180,17 +242,15 @@ const ClientDetailPage = () => {
                         </div>
                         <div>
                             <label className="block text-sm font-semibold text-text-primary mb-2">
-                                Sector industrial
+                                Región
                             </label>
-                            <select
-                                value={formData.sector}
-                                onChange={(e) => handleChange('sector', e.target.value)}
+                            <input
+                                type="text"
+                                value={formData.region}
+                                onChange={(e) => handleChange('region', e.target.value)}
                                 className="form-input-base"
-                            >
-                                {SECTORES.map(s => (
-                                    <option key={s} value={s}>{s}</option>
-                                ))}
-                            </select>
+                                placeholder="Ej: Norteamérica"
+                            />
                         </div>
                     </div>
                 </section>
@@ -198,7 +258,9 @@ const ClientDetailPage = () => {
                 {/* Revenue Targets Section */}
                 <section className="card overflow-hidden">
                     <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                        <h3 className="text-lg font-bold text-text-primary">Objetivos de Ingresos (FY 2024)</h3>
+                        <h3 className="text-lg font-bold text-text-primary">
+                            Objetivos de Ingresos (FY {currentYear})
+                        </h3>
                     </div>
                     <div className="p-6 space-y-6">
                         {/* Annual target */}
@@ -231,7 +293,15 @@ const ClientDetailPage = () => {
                                 {['Q1', 'Q2', 'Q3', 'Q4'].map((q) => (
                                     <div key={q}>
                                         <label className="block text-xs font-medium text-text-secondary mb-1">
-                                            {q} ({q === 'Q1' ? 'Ene-Mar' : q === 'Q2' ? 'Abr-Jun' : q === 'Q3' ? 'Jul-Sep' : 'Oct-Dic'})
+                                            {q} (
+                                            {q === 'Q1'
+                                                ? 'Ene-Mar'
+                                                : q === 'Q2'
+                                                    ? 'Abr-Jun'
+                                                    : q === 'Q3'
+                                                        ? 'Jul-Sep'
+                                                        : 'Oct-Dic'}
+                                            )
                                         </label>
                                         <input
                                             type="number"
@@ -244,7 +314,10 @@ const ClientDetailPage = () => {
                             </div>
                             <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between text-sm">
                                 <span className="text-text-secondary">Suma de trimestres:</span>
-                                <span className={`font-bold ${validacion ? 'text-emerald-600' : 'text-red-500'}`}>
+                                <span
+                                    className={`font-bold ${validacion ? 'text-emerald-600' : 'text-red-500'
+                                        }`}
+                                >
                                     {formatCurrency(sumaTrimestres)} / {formatCurrency(formData.objetivoAnual)}
                                 </span>
                             </div>
@@ -254,8 +327,8 @@ const ClientDetailPage = () => {
 
                 {/* Footer with audit info */}
                 <footer className="flex items-center justify-between py-4 text-xs text-text-secondary">
-                    <span>Última edición: 15 mayo 2025, Admin</span>
-                    <span>Creado: {originalDistribuidor.createdAt}</span>
+                    <span>Región: {distribuidor.region || 'Sin asignar'}</span>
+                    <span>Creado: {new Date(distribuidor.created_at).toLocaleDateString()}</span>
                 </footer>
             </div>
         </AdminLayout>

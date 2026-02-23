@@ -1,16 +1,12 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AdminLayout from '../../components/layout/AdminLayout'
+import { userService } from '../../services/userService'
+import { distribuidorService } from '../../services/distribuidorService'
 
 const ROLES = [
     { id: 'admin', label: 'Administrador Corporativo' },
     { id: 'distribuidor', label: 'Distribuidor / Cliente' },
-]
-
-const CLIENTES = [
-    { id: 'dist-acme', nombre: 'Acme Corp' },
-    { id: 'dist-global', nombre: 'Global Logistics' },
-    { id: 'dist-tech', nombre: 'Techstream' },
 ]
 
 const CreateUserPage = () => {
@@ -25,6 +21,24 @@ const CreateUserPage = () => {
     })
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
+    const [error, setError] = useState('')
+    const [clientes, setClientes] = useState([])
+    const [loadingClientes, setLoadingClientes] = useState(true)
+
+    // Cargar lista de clientes (distribuidores) existentes
+    useEffect(() => {
+        const loadClientes = async () => {
+            try {
+                const data = await distribuidorService.getAll()
+                setClientes(data)
+            } catch (err) {
+                console.error('Error cargando clientes:', err)
+            } finally {
+                setLoadingClientes(false)
+            }
+        }
+        loadClientes()
+    }, [])
 
     const handleChange = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }))
@@ -32,21 +46,34 @@ const CreateUserPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        setError('')
+
         if (formData.password !== formData.confirmPassword) {
-            alert('Las contraseñas no coinciden')
+            setError('Las contraseñas no coinciden')
+            return
+        }
+
+        if (formData.password.length < 6) {
+            setError('La contraseña debe tener al menos 6 caracteres')
             return
         }
 
         setLoading(true)
 
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000))
-
-        // In a real app we would save to DB/Auth provider
-        console.log('Creating user:', formData)
-
-        setLoading(false)
-        navigate('/admin/usuarios')
+        try {
+            await userService.createUser({
+                email: formData.email,
+                password: formData.password,
+                nombre: formData.nombre,
+                role: formData.rol,
+            })
+            navigate('/admin/usuarios')
+        } catch (err) {
+            console.error('Error creando usuario:', err)
+            setError(err.message || 'Error al crear el usuario')
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
@@ -88,6 +115,12 @@ const CreateUserPage = () => {
                         <p className="text-text-secondary">Configure las credenciales y permisos de acceso</p>
                     </div>
                 </div>
+
+                {error && (
+                    <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm mb-6">
+                        {error}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="card p-6 space-y-6">
                     <div className="space-y-4">
@@ -144,13 +177,15 @@ const CreateUserPage = () => {
                                         value={formData.clienteId}
                                         onChange={(e) => handleChange('clienteId', e.target.value)}
                                         className="form-input-base"
-                                        required
                                     >
-                                        <option value="">Seleccione un cliente...</option>
-                                        {CLIENTES.map(cliente => (
+                                        <option value="">Nuevo cliente (se creará automáticamente)</option>
+                                        {clientes.map(cliente => (
                                             <option key={cliente.id} value={cliente.id}>{cliente.nombre}</option>
                                         ))}
                                     </select>
+                                    {loadingClientes && (
+                                        <p className="text-xs text-text-secondary mt-1">Cargando clientes...</p>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -197,7 +232,7 @@ const CreateUserPage = () => {
                                 </div>
                             </div>
                             <p className="text-xs text-text-secondary mt-2">
-                                El usuario deberá cambiar su contraseña al iniciar sesión por primera vez.
+                                El administrador asigna la contraseña. Solo un administrador puede cambiarla.
                             </p>
                         </div>
                     </div>

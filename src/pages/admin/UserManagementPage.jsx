@@ -1,13 +1,35 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AdminLayout from '../../components/layout/AdminLayout'
-import { mockUsers } from '../../constants/mockUsers'
+import { userService } from '../../services/userService'
 import { getInitials } from '../../utils/formatters'
 
 const UserManagementPage = () => {
     const navigate = useNavigate()
     const [searchTerm, setSearchTerm] = useState('')
-    const [users, setUsers] = useState(mockUsers)
+    const [users, setUsers] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
+    const [togglingId, setTogglingId] = useState(null)
+
+    // Cargar usuarios al montar
+    useEffect(() => {
+        loadUsers()
+    }, [])
+
+    const loadUsers = async () => {
+        try {
+            setLoading(true)
+            setError(null)
+            const data = await userService.getUsers()
+            setUsers(data)
+        } catch (err) {
+            console.error('Error cargando usuarios:', err)
+            setError('Error al cargar los usuarios')
+        } finally {
+            setLoading(false)
+        }
+    }
 
     // Filter users
     const filteredUsers = users.filter(u =>
@@ -19,10 +41,20 @@ const UserManagementPage = () => {
     const totalUsers = users.length
     const cuentasClientes = users.filter(u => u.role === 'distribuidor').length
 
-    const toggleUserActive = (id) => {
-        setUsers(prev =>
-            prev.map(u => u.id === id ? { ...u, activo: !u.activo } : u)
-        )
+    const toggleUserActive = async (id, currentlyActive) => {
+        try {
+            setTogglingId(id)
+            await userService.toggleActive(id, currentlyActive)
+            // Actualizar estado local
+            setUsers(prev =>
+                prev.map(u => u.id === id ? { ...u, activo: !u.activo } : u)
+            )
+        } catch (err) {
+            console.error('Error actualizando usuario:', err)
+            alert('Error al actualizar el estado del usuario')
+        } finally {
+            setTogglingId(null)
+        }
     }
 
     return (
@@ -86,102 +118,120 @@ const UserManagementPage = () => {
                 </div>
             </div>
 
-            {/* Table */}
-            <div className="card overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-gray-50 border-b border-gray-200">
-                                <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider">
-                                    Nombre
-                                </th>
-                                <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider">
-                                    Rol
-                                </th>
-                                <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider">
-                                    Cliente asignado
-                                </th>
-                                <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider text-right">
-                                    Acciones
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
-                            {filteredUsers.map((user) => (
-                                <tr key={user.id} className="hover:bg-gray-50 transition-colors">
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">
-                                                {getInitials(user.nombre)}
-                                            </div>
-                                            <div>
-                                                <p className="font-bold text-text-primary">{user.nombre}</p>
-                                                <p className="text-xs text-text-secondary">{user.email}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className={`badge ${user.role === 'admin' ? 'badge-primary' : 'badge-neutral'}`}>
-                                            {user.role === 'admin' ? 'Admin' : 'Cliente'}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className="text-sm text-text-primary">
-                                            {user.clienteNombre || '—'}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex justify-end gap-1">
-                                            <button
-                                                className="p-2 text-text-secondary hover:text-primary hover:bg-primary/10 transition-colors rounded-lg"
-                                                title="Editar usuario"
-                                            >
-                                                <span className="material-symbols-outlined text-xl">edit</span>
-                                            </button>
-                                            <button
-                                                className="p-2 text-text-secondary hover:text-amber-600 hover:bg-amber-50 transition-colors rounded-lg"
-                                                title="Restablecer contraseña"
-                                            >
-                                                <span className="material-symbols-outlined text-xl">lock_reset</span>
-                                            </button>
-                                            <button
-                                                onClick={() => toggleUserActive(user.id)}
-                                                className={`p-2 transition-colors rounded-lg ${user.activo
-                                                    ? 'text-text-secondary hover:text-red-600 hover:bg-red-50'
-                                                    : 'text-emerald-600 hover:bg-emerald-50'
-                                                    }`}
-                                                title={user.activo ? 'Desactivar cuenta' : 'Activar cuenta'}
-                                            >
-                                                <span className="material-symbols-outlined text-xl">
-                                                    {user.activo ? 'block' : 'check_circle'}
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+            {/* Loading State */}
+            {loading && (
+                <div className="flex items-center justify-center py-12">
+                    <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
                 </div>
+            )}
 
-                {/* Pagination */}
-                <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-gray-50">
-                    <p className="text-xs text-text-secondary font-medium">
-                        Mostrando 1 a {filteredUsers.length} de {users.length} usuarios
-                    </p>
-                    <div className="flex gap-1">
-                        <button className="w-8 h-8 rounded-lg flex items-center justify-center border border-gray-300 bg-white text-text-secondary hover:bg-gray-50 transition-colors">
-                            <span className="material-symbols-outlined text-lg">chevron_left</span>
-                        </button>
-                        <button className="w-8 h-8 rounded-lg flex items-center justify-center bg-primary text-white font-bold text-xs">
-                            1
-                        </button>
-                        <button className="w-8 h-8 rounded-lg flex items-center justify-center border border-gray-300 bg-white text-text-secondary hover:bg-gray-50 transition-colors">
-                            <span className="material-symbols-outlined text-lg">chevron_right</span>
-                        </button>
+            {/* Error State */}
+            {error && (
+                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm mb-6">
+                    {error}
+                    <button onClick={loadUsers} className="ml-2 underline font-medium">Reintentar</button>
+                </div>
+            )}
+
+            {/* Table */}
+            {!loading && !error && (
+                <div className="card overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="bg-gray-50 border-b border-gray-200">
+                                    <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider">
+                                        Nombre
+                                    </th>
+                                    <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider">
+                                        Rol
+                                    </th>
+                                    <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider">
+                                        Cliente asignado
+                                    </th>
+                                    <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider text-right">
+                                        Acciones
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200">
+                                {filteredUsers.map((user) => (
+                                    <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">
+                                                    {getInitials(user.nombre)}
+                                                </div>
+                                                <div>
+                                                    <p className="font-bold text-text-primary">{user.nombre}</p>
+                                                    <p className="text-xs text-text-secondary">{user.email}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className={`badge ${user.role === 'admin' ? 'badge-primary' : 'badge-neutral'}`}>
+                                                {user.role === 'admin' ? 'Admin' : 'Cliente'}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className="text-sm text-text-primary">
+                                                {user.distribuidores?.[0]?.nombre || '—'}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex justify-end gap-1">
+                                                <button
+                                                    className="p-2 text-text-secondary hover:text-primary hover:bg-primary/10 transition-colors rounded-lg"
+                                                    title="Editar usuario"
+                                                >
+                                                    <span className="material-symbols-outlined text-xl">edit</span>
+                                                </button>
+                                                <button
+                                                    className="p-2 text-text-secondary hover:text-amber-600 hover:bg-amber-50 transition-colors rounded-lg"
+                                                    title="Restablecer contraseña"
+                                                >
+                                                    <span className="material-symbols-outlined text-xl">lock_reset</span>
+                                                </button>
+                                                <button
+                                                    onClick={() => toggleUserActive(user.id, user.activo)}
+                                                    disabled={togglingId === user.id}
+                                                    className={`p-2 transition-colors rounded-lg ${user.activo
+                                                        ? 'text-text-secondary hover:text-red-600 hover:bg-red-50'
+                                                        : 'text-emerald-600 hover:bg-emerald-50'
+                                                        } disabled:opacity-50`}
+                                                    title={user.activo ? 'Desactivar cuenta' : 'Activar cuenta'}
+                                                >
+                                                    <span className="material-symbols-outlined text-xl">
+                                                        {user.activo ? 'block' : 'check_circle'}
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* Pagination */}
+                    <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-gray-50">
+                        <p className="text-xs text-text-secondary font-medium">
+                            Mostrando 1 a {filteredUsers.length} de {users.length} usuarios
+                        </p>
+                        <div className="flex gap-1">
+                            <button className="w-8 h-8 rounded-lg flex items-center justify-center border border-gray-300 bg-white text-text-secondary hover:bg-gray-50 transition-colors">
+                                <span className="material-symbols-outlined text-lg">chevron_left</span>
+                            </button>
+                            <button className="w-8 h-8 rounded-lg flex items-center justify-center bg-primary text-white font-bold text-xs">
+                                1
+                            </button>
+                            <button className="w-8 h-8 rounded-lg flex items-center justify-center border border-gray-300 bg-white text-text-secondary hover:bg-gray-50 transition-colors">
+                                <span className="material-symbols-outlined text-lg">chevron_right</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
         </AdminLayout>
     )
 }

@@ -38,7 +38,17 @@ const LoginPage = () => {
                 navigate('/dashboard', { replace: true })
             }
         } catch (err) {
-            setError(err.message || 'Error al iniciar sesión')
+            // Mapear errores comunes de Supabase a español
+            const msg = err.message || ''
+            if (msg.includes('Invalid login credentials')) {
+                setError('Credenciales inválidas. Verifique su correo y contraseña.')
+            } else if (msg.includes('desactivado')) {
+                setError(err.message)
+            } else if (msg.includes('Email not confirmed')) {
+                setError('El correo no ha sido confirmado.')
+            } else {
+                setError(err.message || 'Error al iniciar sesión. Intente de nuevo.')
+            }
         } finally {
             setLoading(false)
         }
@@ -134,12 +144,10 @@ const LoginPage = () => {
                         </button>
                     </form>
 
-                    {/* Demo credentials hint */}
+                    {/* Footer info */}
                     <div className="mt-6 pt-6 border-t border-gray-100">
                         <p className="text-xs text-text-secondary text-center">
-                            <strong>Demo:</strong> admin@solidview.com / admin123 (Admin)
-                            <br />
-                            distribuidor@acme.com / dist123 (Distribuidor)
+                            Si no puede acceder, contacte al administrador del sistema.
                         </p>
                     </div>
                 </div>
