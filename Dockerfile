@@ -13,17 +13,11 @@ RUN npm ci || npm install
 # Copy the rest of the application code
 COPY . .
 
-# Pass build arguments (from Dokploy Environment)
-ARG VITE_SUPABASE_URL
-ARG VITE_SUPABASE_ANON_KEY
-
-# Set them as environment variables during the build step
-ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
-ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
+# NOTE: Dokploy's "Create Environment File" feature will generate a .env 
+# file in this directory automatically right before the build command.
+# Vite natively reads from .env files during the build step.
 
 # Build the application
-# We need to ensure that Vite gets any needed environment variables here if they are build-time variables. 
-# In Dokploy you will configure these in the UI.
 RUN npm run build
 
 # Stage 2: Serve the application using Nginx
