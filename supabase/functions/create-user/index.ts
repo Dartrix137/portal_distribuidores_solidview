@@ -63,7 +63,7 @@ serve(async (req) => {
         }
 
         // Obtener datos del body
-        const { email, password, nombre, role, region, objetivo_anual } = await req.json()
+        const { email, password, nombre, role, distribuidor_id } = await req.json()
 
         // Validar campos requeridos
         if (!email || !password || !nombre || !role) {
@@ -99,6 +99,7 @@ serve(async (req) => {
                 email,
                 role,
                 nombre,
+                distribuidor_id: role === 'distribuidor' ? distribuidor_id : null,
                 activo: true,
             })
             .select()
@@ -113,32 +114,12 @@ serve(async (req) => {
             })
         }
 
-        // Si es distribuidor, crear registro en tabla distribuidores
-        if (role === 'distribuidor') {
-            const { error: distError } = await supabaseAdmin.from('distribuidores').insert({
-                user_id: newUser.user.id,
-                nombre,
-                region: region || null,
-                objetivo_anual: objetivo_anual || 0,
-            })
-
-            if (distError) {
-                // Rollback completo
-                await supabaseAdmin.from('users').delete().eq('id', newUser.user.id)
-                await supabaseAdmin.auth.admin.deleteUser(newUser.user.id)
-                return new Response(JSON.stringify({ error: distError.message }), {
-                    status: 400,
-                    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                })
-            }
-        }
-
         return new Response(JSON.stringify({ success: true, user: userRecord }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 200,
         })
     } catch (error) {
-        return new Response(JSON.stringify({ error: error.message }), {
+        return new Response(JSON.stringify({ error: (error as Error).message }), {
             status: 500,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         })

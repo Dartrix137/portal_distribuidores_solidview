@@ -2,26 +2,26 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- ==========================================
--- 1. TABLA: users
+-- 1. TABLA: distribuidores
+-- ==========================================
+CREATE TABLE distribuidores (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    nombre TEXT NOT NULL,
+    region TEXT,
+    objetivo_anual NUMERIC(15, 2) DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- ==========================================
+-- 2. TABLA: users
 -- ==========================================
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email TEXT UNIQUE NOT NULL,
     role TEXT NOT NULL CHECK (role IN ('admin', 'distribuidor')),
+    distribuidor_id UUID REFERENCES distribuidores(id) ON DELETE SET NULL,
     nombre TEXT NOT NULL,
     activo BOOLEAN DEFAULT true,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
-);
-
--- ==========================================
--- 2. TABLA: distribuidores
--- ==========================================
-CREATE TABLE distribuidores (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    nombre TEXT NOT NULL,
-    region TEXT,
-    objetivo_anual NUMERIC(15, 2) DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -88,7 +88,9 @@ USING (
 -- 2. Distribuidores solo pueden ver su distribuidor
 CREATE POLICY "Distribuidores pueden ver su propio registro" 
 ON distribuidores FOR SELECT 
-USING (user_id = auth.uid());
+USING (
+    id IN (SELECT distribuidor_id FROM users WHERE id = auth.uid())
+);
 
 -- ------------------------------------------
 -- Políticas para 'ventas'
@@ -104,7 +106,7 @@ USING (
 CREATE POLICY "Distribuidores pueden ver sus ventas" 
 ON ventas FOR SELECT 
 USING (
-    distribuidor_id IN (SELECT id FROM distribuidores WHERE user_id = auth.uid())
+    distribuidor_id IN (SELECT distribuidor_id FROM users WHERE id = auth.uid())
 );
 
 -- ------------------------------------------
@@ -121,5 +123,5 @@ USING (
 CREATE POLICY "Distribuidores pueden ver sus objetivos" 
 ON objetivos FOR SELECT 
 USING (
-    distribuidor_id IN (SELECT id FROM distribuidores WHERE user_id = auth.uid())
+    distribuidor_id IN (SELECT distribuidor_id FROM users WHERE id = auth.uid())
 );

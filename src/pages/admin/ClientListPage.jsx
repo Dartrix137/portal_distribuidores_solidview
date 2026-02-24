@@ -193,8 +193,8 @@ const ClientListPage = () => {
                                         <td className="px-6 py-4">
                                             <span
                                                 className={`badge ${distribuidor.users?.activo !== false
-                                                        ? 'badge-success'
-                                                        : 'badge-neutral'
+                                                    ? 'badge-success'
+                                                    : 'badge-neutral'
                                                     }`}
                                             >
                                                 {distribuidor.users?.activo !== false ? 'Activo' : 'Inactivo'}
@@ -207,18 +207,7 @@ const ClientListPage = () => {
                                                         navigate(`/admin/clientes/${distribuidor.id}`)
                                                     }
                                                     className="p-2 text-text-secondary hover:text-primary hover:bg-primary/10 transition-colors rounded-lg"
-                                                    title="Ver detalles"
-                                                >
-                                                    <span className="material-symbols-outlined text-xl">
-                                                        visibility
-                                                    </span>
-                                                </button>
-                                                <button
-                                                    onClick={() =>
-                                                        navigate(`/admin/clientes/${distribuidor.id}`)
-                                                    }
-                                                    className="p-2 text-text-secondary hover:text-primary hover:bg-primary/10 transition-colors rounded-lg"
-                                                    title="Editar"
+                                                    title="Editar / Ver detalles"
                                                 >
                                                     <span className="material-symbols-outlined text-xl">edit</span>
                                                 </button>

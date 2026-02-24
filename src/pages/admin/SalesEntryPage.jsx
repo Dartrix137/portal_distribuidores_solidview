@@ -73,9 +73,13 @@ const SalesEntryPage = () => {
 
     const availableWeeks = getWeeksForQuarter(formData.trimestre)
 
-    // Generate year options dynamically
+    // Generate year options dynamically (from current year down to 2025)
     const currentYear = new Date().getFullYear()
-    const yearOptions = [currentYear, currentYear - 1, currentYear - 2]
+    const startYear = 2025
+    const yearOptions = Array.from(
+        { length: Math.max(1, currentYear - startYear + 1) },
+        (_, i) => currentYear - i
+    )
 
     const handleSubmit = async (e) => {
         e.preventDefault()

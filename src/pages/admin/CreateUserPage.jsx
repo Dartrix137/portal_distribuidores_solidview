@@ -58,6 +58,11 @@ const CreateUserPage = () => {
             return
         }
 
+        if (formData.rol === 'distribuidor' && !formData.clienteId) {
+            setError('Debe seleccionar un cliente asociado para el distribuidor')
+            return
+        }
+
         setLoading(true)
 
         try {
@@ -66,6 +71,7 @@ const CreateUserPage = () => {
                 password: formData.password,
                 nombre: formData.nombre,
                 role: formData.rol,
+                distribuidor_id: formData.rol === 'distribuidor' ? formData.clienteId : null,
             })
             navigate('/admin/usuarios')
         } catch (err) {
@@ -177,8 +183,9 @@ const CreateUserPage = () => {
                                         value={formData.clienteId}
                                         onChange={(e) => handleChange('clienteId', e.target.value)}
                                         className="form-input-base"
+                                        required
                                     >
-                                        <option value="">Nuevo cliente (se creará automáticamente)</option>
+                                        <option value="">Seleccione un cliente</option>
                                         {clientes.map(cliente => (
                                             <option key={cliente.id} value={cliente.id}>{cliente.nombre}</option>
                                         ))}

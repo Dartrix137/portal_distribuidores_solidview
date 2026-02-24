@@ -57,6 +57,22 @@ const UserManagementPage = () => {
         }
     }
 
+    const handleResetPassword = async (userId) => {
+        const newPassword = prompt('Ingrese la nueva contraseña para el usuario (min 6 caracteres):')
+        if (!newPassword) return
+        if (newPassword.length < 6) {
+            alert('La contraseña debe tener al menos 6 caracteres.')
+            return
+        }
+
+        try {
+            await userService.updatePassword(userId, newPassword)
+            alert('Contraseña actualizada exitosamente.')
+        } catch (err) {
+            alert('Error al actualizar contraseña: ' + err.message)
+        }
+    }
+
     return (
         <AdminLayout
             breadcrumb="Gestión de Usuarios"
@@ -175,18 +191,16 @@ const UserManagementPage = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className="text-sm text-text-primary">
-                                                {user.distribuidores?.[0]?.nombre || '—'}
+                                                {Array.isArray(user.distribuidores)
+                                                    ? user.distribuidores[0]?.nombre
+                                                    : user.distribuidores?.nombre || '—'}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex justify-end gap-1">
+                                                {/* Botón de editar (comentado si no hay página de edición) */}
                                                 <button
-                                                    className="p-2 text-text-secondary hover:text-primary hover:bg-primary/10 transition-colors rounded-lg"
-                                                    title="Editar usuario"
-                                                >
-                                                    <span className="material-symbols-outlined text-xl">edit</span>
-                                                </button>
-                                                <button
+                                                    onClick={() => handleResetPassword(user.id)}
                                                     className="p-2 text-text-secondary hover:text-amber-600 hover:bg-amber-50 transition-colors rounded-lg"
                                                     title="Restablecer contraseña"
                                                 >

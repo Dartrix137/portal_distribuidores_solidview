@@ -98,12 +98,13 @@ const ClientDetailPage = () => {
         )
     }
 
+    const parsedObjetivoAnual = Number(formData.objetivoAnual) || 0
     const porcentaje =
-        formData.objetivoAnual > 0
-            ? Math.round((ventaAnual / formData.objetivoAnual) * 100)
+        parsedObjetivoAnual > 0
+            ? Math.round((ventaAnual / parsedObjetivoAnual) * 100)
             : 0
-    const sumaTrimestres = Object.values(formData.trimestres).reduce((sum, t) => sum + t.meta, 0)
-    const validacion = sumaTrimestres === formData.objetivoAnual
+    const sumaTrimestres = Object.values(formData.trimestres).reduce((sum, t) => sum + (Number(t.meta) || 0), 0)
+    const validacion = sumaTrimestres === parsedObjetivoAnual
 
     const handleChange = (field, value) => {
         setFormData((prev) => ({ ...prev, [field]: value }))
@@ -112,12 +113,11 @@ const ClientDetailPage = () => {
     }
 
     const handleTrimestreChange = (quarter, value) => {
-        const numValue = Number(value) || 0
         setFormData((prev) => ({
             ...prev,
             trimestres: {
                 ...prev.trimestres,
-                [quarter]: { meta: numValue },
+                [quarter]: { meta: value },
             },
         }))
         setHasChanges(true)
@@ -133,15 +133,15 @@ const ClientDetailPage = () => {
             await distribuidorService.update(id, {
                 nombre: formData.nombre,
                 region: formData.region,
-                objetivo_anual: formData.objetivoAnual,
+                objetivo_anual: parsedObjetivoAnual,
             })
 
             // Crear/actualizar objetivos trimestrales
             await objetivosService.createYearObjectives(id, currentYear, {
-                Q1: formData.trimestres.Q1.meta,
-                Q2: formData.trimestres.Q2.meta,
-                Q3: formData.trimestres.Q3.meta,
-                Q4: formData.trimestres.Q4.meta,
+                Q1: Number(formData.trimestres.Q1.meta) || 0,
+                Q2: Number(formData.trimestres.Q2.meta) || 0,
+                Q3: Number(formData.trimestres.Q3.meta) || 0,
+                Q4: Number(formData.trimestres.Q4.meta) || 0,
             })
 
             setHasChanges(false)
@@ -207,10 +207,10 @@ const ClientDetailPage = () => {
                             <h2 className="text-2xl font-bold text-text-primary">{distribuidor.nombre}</h2>
                             <span
                                 className={`badge ${porcentaje >= 80
-                                        ? 'badge-success'
-                                        : porcentaje >= 50
-                                            ? 'badge-warning'
-                                            : 'badge-error'
+                                    ? 'badge-success'
+                                    : porcentaje >= 50
+                                        ? 'badge-warning'
+                                        : 'badge-error'
                                     }`}
                             >
                                 {porcentaje}% cumplimiento
@@ -218,7 +218,7 @@ const ClientDetailPage = () => {
                         </div>
                         <p className="text-text-secondary">
                             Venta actual: {formatCurrency(ventaAnual)} /{' '}
-                            {formatCurrency(formData.objetivoAnual)}
+                            {formatCurrency(parsedObjetivoAnual)}
                         </p>
                     </div>
                 </div>
@@ -242,15 +242,25 @@ const ClientDetailPage = () => {
                         </div>
                         <div>
                             <label className="block text-sm font-semibold text-text-primary mb-2">
-                                Región
+                                Sector Industrial
                             </label>
-                            <input
-                                type="text"
+                            <select
                                 value={formData.region}
                                 onChange={(e) => handleChange('region', e.target.value)}
                                 className="form-input-base"
-                                placeholder="Ej: Norteamérica"
-                            />
+                            >
+                                <option value="" disabled>Seleccione un sector...</option>
+                                {[
+                                    'Manufactura y Hardware',
+                                    'Logística y Transporte',
+                                    'Software y SaaS',
+                                    'Servicios Financieros',
+                                    'Retail y Comercio',
+                                    'Telecomunicaciones',
+                                ].map((s) => (
+                                    <option key={s} value={s}>{s}</option>
+                                ))}
+                            </select>
                         </div>
                     </div>
                 </section>
@@ -271,7 +281,7 @@ const ClientDetailPage = () => {
                             <input
                                 type="number"
                                 value={formData.objetivoAnual}
-                                onChange={(e) => handleChange('objetivoAnual', Number(e.target.value))}
+                                onChange={(e) => handleChange('objetivoAnual', e.target.value)}
                                 className="form-input-base max-w-xs"
                             />
                         </div>
@@ -318,7 +328,7 @@ const ClientDetailPage = () => {
                                     className={`font-bold ${validacion ? 'text-emerald-600' : 'text-red-500'
                                         }`}
                                 >
-                                    {formatCurrency(sumaTrimestres)} / {formatCurrency(formData.objetivoAnual)}
+                                    {formatCurrency(sumaTrimestres)} / {formatCurrency(parsedObjetivoAnual)}
                                 </span>
                             </div>
                         </div>

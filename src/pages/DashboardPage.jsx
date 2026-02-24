@@ -105,9 +105,13 @@ const DashboardPage = () => {
     const qFaltante = currentQuarterMeta - currentQuarterVenta
     const qEstado = getMensajeEstado(qPorcentaje)
 
-    // Year options
+    // Year options (from current year down to 2025)
     const currentYear = new Date().getFullYear()
-    const yearOptions = [currentYear, currentYear - 1, currentYear - 2]
+    const startYear = 2025
+    const yearOptions = Array.from(
+        { length: Math.max(1, currentYear - startYear + 1) },
+        (_, i) => currentYear - i
+    )
 
     return (
         <div className="min-h-screen flex flex-col bg-background-light">

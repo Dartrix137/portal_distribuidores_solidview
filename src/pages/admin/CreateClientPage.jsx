@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AdminLayout from '../../components/layout/AdminLayout'
-import { userService } from '../../services/userService'
+import { distribuidorService } from '../../services/distribuidorService'
 
 const SECTORES = [
     'Manufactura y Hardware',
@@ -17,8 +17,6 @@ const CreateClientPage = () => {
     const [formData, setFormData] = useState({
         nombre: '',
         sector: SECTORES[0],
-        email: '',
-        password: '',
     })
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
@@ -31,27 +29,19 @@ const CreateClientPage = () => {
         e.preventDefault()
         setError('')
 
-        if (!formData.nombre.trim() || !formData.email.trim() || !formData.password.trim()) {
-            setError('Todos los campos son obligatorios')
-            return
-        }
-
-        if (formData.password.length < 6) {
-            setError('La contraseña debe tener al menos 6 caracteres')
+        if (!formData.nombre.trim()) {
+            setError('El nombre de la entidad legal es obligatorio')
             return
         }
 
         setLoading(true)
 
         try {
-            // Crear usuario con rol distribuidor via Edge Function
-            // Esto creará el usuario en Auth, tabla users Y tabla distribuidores
-            await userService.createUser({
-                email: formData.email,
-                password: formData.password,
+            // Crear solo el distribuidor en la base de datos
+            await distribuidorService.create({
                 nombre: formData.nombre,
-                role: 'distribuidor',
                 region: formData.sector, // Usar sector como región
+                objetivo_anual: 0
             })
 
             navigate('/admin/clientes')
@@ -63,7 +53,7 @@ const CreateClientPage = () => {
         }
     }
 
-    const isValid = formData.nombre.trim().length > 0 && formData.email.trim().length > 0 && formData.password.trim().length >= 6
+    const isValid = formData.nombre.trim().length > 0
 
     return (
         <AdminLayout
@@ -147,49 +137,14 @@ const CreateClientPage = () => {
                         </div>
                     </section>
 
-                    <section className="card overflow-hidden">
-                        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                            <h3 className="text-lg font-bold text-text-primary">Credenciales de Acceso</h3>
-                        </div>
-                        <div className="p-6 space-y-6">
-                            <div>
-                                <label className="block text-sm font-semibold text-text-primary mb-2">
-                                    Correo electrónico
-                                </label>
-                                <input
-                                    type="email"
-                                    value={formData.email}
-                                    onChange={(e) => handleChange('email', e.target.value)}
-                                    className="form-input-base"
-                                    required
-                                    placeholder="usuario@empresa.com"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-text-primary mb-2">
-                                    Contraseña temporal
-                                </label>
-                                <input
-                                    type="password"
-                                    value={formData.password}
-                                    onChange={(e) => handleChange('password', e.target.value)}
-                                    className="form-input-base"
-                                    required
-                                    minLength={6}
-                                    placeholder="Mínimo 6 caracteres"
-                                />
-                            </div>
-                        </div>
-                    </section>
-
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                         <div className="flex items-start gap-3">
                             <span className="material-symbols-outlined text-blue-600">info</span>
                             <div>
-                                <p className="text-sm font-medium text-blue-800">Objetivos de ingresos</p>
+                                <p className="text-sm font-medium text-blue-800">Objetivos de ingresos y Usuarios</p>
                                 <p className="text-sm text-blue-700 mt-1">
-                                    Los objetivos anuales y trimestrales se configuran después de crear el cliente,
-                                    en la página de detalle del cliente.
+                                    Los objetivos anuales y trimestrales se configuran en la página de detalle del cliente.
+                                    Los usuarios con acceso a este cliente se deben crear en la sección de Usuarios.
                                 </p>
                             </div>
                         </div>
