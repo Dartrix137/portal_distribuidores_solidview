@@ -1,0 +1,9 @@
+node_modules
+dist
+.env
+.env.local
+.git
+.gitignore
+README.md
+nohup.out
+.DS_Store
