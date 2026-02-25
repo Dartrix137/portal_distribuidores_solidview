@@ -11,6 +11,7 @@ import ClientDetailPage from './pages/admin/ClientDetailPage'
 import CreateUserPage from './pages/admin/CreateUserPage'
 import CreateClientPage from './pages/admin/CreateClientPage'
 import UserManagementPage from './pages/admin/UserManagementPage'
+import EditUserPage from './pages/admin/EditUserPage'
 import SalesEntryPage from './pages/admin/SalesEntryPage'
 
 const App = () => {
@@ -77,6 +78,14 @@ const App = () => {
                     element={
                         <ProtectedRoute allowedRoles={['admin']}>
                             <CreateUserPage />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/usuarios/editar/:id"
+                    element={
+                        <ProtectedRoute allowedRoles={['admin']}>
+                            <EditUserPage />
                         </ProtectedRoute>
                     }
                 />

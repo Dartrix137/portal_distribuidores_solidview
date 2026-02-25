@@ -89,6 +89,20 @@ const UserManagementPage = () => {
         }
     }
 
+    const handleDeleteUser = async (user) => {
+        if (!window.confirm(`¿Está seguro que desea eliminar al usuario ${user.nombre}? Esta acción solo eliminará el registro de la base de datos pública.`)) {
+            return
+        }
+
+        try {
+            await userService.deleteUser(user.id)
+            setUsers(prev => prev.filter(u => u.id !== user.id))
+        } catch (err) {
+            console.error('Error eliminando usuario:', err)
+            alert('Error al eliminar el usuario: ' + err.message)
+        }
+    }
+
     return (
         <AdminLayout
             breadcrumb="Gestión de Usuarios"
@@ -214,7 +228,13 @@ const UserManagementPage = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex justify-end gap-1">
-                                                {/* Botón de editar (comentado si no hay página de edición) */}
+                                                <button
+                                                    onClick={() => navigate(`/admin/usuarios/editar/${user.id}`)}
+                                                    className="p-2 text-text-secondary hover:text-primary hover:bg-primary/5 transition-colors rounded-lg"
+                                                    title="Editar usuario"
+                                                >
+                                                    <span className="material-symbols-outlined text-xl">edit</span>
+                                                </button>
                                                 <button
                                                     onClick={() => handleResetPassword(user.id)}
                                                     className="p-2 text-text-secondary hover:text-amber-600 hover:bg-amber-50 transition-colors rounded-lg"
@@ -234,6 +254,13 @@ const UserManagementPage = () => {
                                                     <span className="material-symbols-outlined text-xl">
                                                         {user.activo ? 'block' : 'check_circle'}
                                                     </span>
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteUser(user)}
+                                                    className="p-2 text-text-secondary hover:text-red-600 hover:bg-red-50 transition-colors rounded-lg"
+                                                    title="Eliminar usuario"
+                                                >
+                                                    <span className="material-symbols-outlined text-xl">delete</span>
                                                 </button>
                                             </div>
                                         </td>
@@ -263,8 +290,8 @@ const UserManagementPage = () => {
                                         key={page}
                                         onClick={() => setCurrentPage(page)}
                                         className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-colors ${currentPage === page
-                                                ? 'bg-primary text-white'
-                                                : 'border border-gray-300 bg-white text-text-secondary hover:bg-gray-50'
+                                            ? 'bg-primary text-white'
+                                            : 'border border-gray-300 bg-white text-text-secondary hover:bg-gray-50'
                                             }`}
                                     >
                                         {page}

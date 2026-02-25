@@ -18,7 +18,14 @@ export const authService = {
             .eq('id', data.user.id)
             .single()
 
-        if (userError) throw userError
+        if (userError) {
+            // Manejar caso de usuario eliminado de la tabla users pero existente en Auth
+            if (userError.code === 'PGRST116') {
+                await supabase.auth.signOut()
+                throw new Error('Esta cuenta ha sido dada de baja. Contacte al administrador.')
+            }
+            throw userError
+        }
 
         if (!userData.activo) {
             await supabase.auth.signOut()

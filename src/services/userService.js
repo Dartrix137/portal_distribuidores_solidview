@@ -59,6 +59,18 @@ export const userService = {
         return data
     },
 
+    // Obtener usuario por ID
+    async getUserById(userId) {
+        const { data, error } = await supabase
+            .from('users')
+            .select('*, distribuidores (*)')
+            .eq('id', userId)
+            .single()
+
+        if (error) throw error
+        return data
+    },
+
     // Listar usuarios (admin)
     async getUsers() {
         const { data, error } = await supabase
@@ -99,5 +111,16 @@ export const userService = {
 
         if (error) throw error
         return data
+    },
+
+    // Eliminar usuario (solo tabla public.users, requiere RLS o service role)
+    async deleteUser(userId) {
+        const { error } = await supabase
+            .from('users')
+            .delete()
+            .eq('id', userId)
+
+        if (error) throw error
+        return true
     },
 }
