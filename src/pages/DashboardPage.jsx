@@ -121,7 +121,9 @@ const DashboardPage = () => {
             {/* Header */}
             <header className="flex items-center justify-between bg-white px-6 md:px-12 py-4 border-b border-gray-200">
                 <div className="flex items-center">
-                    <img src={logo} alt="Solidview Logo" className="h-10 w-auto" />
+                    <a href="https://solidview.com.co/" target="_blank" rel="noopener noreferrer" className="inline-block transition-opacity hover:opacity-80">
+                        <img src={logo} alt="Solidview Logo" className="h-10 w-auto" />
+                    </a>
                 </div>
                 <div className="flex items-center gap-4">
                     <div className="text-right hidden sm:block">

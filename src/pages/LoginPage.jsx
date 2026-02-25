@@ -73,7 +73,9 @@ const LoginPage = () => {
             {/* Header */}
             <header className="flex items-center justify-center border-b border-gray-200 px-10 py-6 bg-white">
                 <div className="flex items-center">
-                    <img src={logo} alt="Solidview Logo" className="h-12 w-auto" />
+                    <a href="https://solidview.com.co/" target="_blank" rel="noopener noreferrer" className="inline-block transition-opacity hover:opacity-80">
+                        <img src={logo} alt="Solidview Logo" className="h-12 w-auto" />
+                    </a>
                 </div>
             </header>
 

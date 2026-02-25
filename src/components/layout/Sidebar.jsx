@@ -21,7 +21,9 @@ const Sidebar = ({ isOpen, onClose }) => {
             <div className="flex flex-col gap-8">
                 {/* Logo */}
                 <div className="flex items-center justify-between px-2">
-                    <img src={logo} alt="Solidview Logo" className="h-10 w-auto" />
+                    <a href="https://solidview.com.co/" target="_blank" rel="noopener noreferrer" className="inline-block transition-opacity hover:opacity-80">
+                        <img src={logo} alt="Solidview Logo" className="h-10 w-auto" />
+                    </a>
                     {/* Close button — mobile only */}
                     <button
                         onClick={onClose}

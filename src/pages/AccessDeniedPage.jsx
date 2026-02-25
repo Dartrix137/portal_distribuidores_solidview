@@ -16,7 +16,9 @@ const AccessDeniedPage = () => {
             {/* Header */}
             <header className="flex items-center justify-between border-b border-gray-200 px-10 py-3 bg-white">
                 <div className="flex items-center">
-                    <img src={logo} alt="Solidview Logo" className="h-8 w-auto" />
+                    <a href="https://solidview.com.co/" target="_blank" rel="noopener noreferrer" className="inline-block transition-opacity hover:opacity-80">
+                        <img src={logo} alt="Solidview Logo" className="h-8 w-auto" />
+                    </a>
                 </div>
                 <div className="flex gap-4">
                     <button className="flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100 text-text-primary hover:bg-gray-200 transition-colors">
