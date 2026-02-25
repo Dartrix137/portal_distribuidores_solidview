@@ -42,9 +42,13 @@ const AccessDeniedPage = () => {
 
                         {/* Text */}
                         <div className="flex flex-col items-center gap-4">
-                            <h1 className="text-3xl font-bold text-text-primary">Acceso Denegado</h1>
+                            <h1 className="text-3xl font-bold text-text-primary">
+                                {isAdmin ? 'Área de Distribuidores' : 'Acceso Denegado'}
+                            </h1>
                             <p className="text-text-secondary text-base max-w-[440px] leading-relaxed">
-                                No tienes permisos para acceder a esta página. Esta área está restringida a administradores corporativos autorizados de Solidview.
+                                {isAdmin
+                                    ? 'No puedes acceder como administrador al sitio de distribuidores. Por favor, regresa al panel de administración.'
+                                    : 'No tienes permisos para acceder a esta página. Esta área está restringida a administradores corporativos autorizados de Solidview.'}
                             </p>
                         </div>
 
@@ -54,21 +58,8 @@ const AccessDeniedPage = () => {
                                 to={getDashboardLink()}
                                 className="flex w-full items-center justify-center rounded-lg h-12 px-6 bg-primary text-white text-sm font-bold transition-all hover:brightness-110 shadow-md active:scale-[0.98]"
                             >
-                                Volver al Dashboard
+                                {isAdmin ? 'Volver al Panel de Administración' : 'Volver al Dashboard'}
                             </Link>
-                            <button className="flex w-full items-center justify-center rounded-lg h-12 px-6 bg-gray-100 text-text-primary text-sm font-bold hover:bg-gray-200 transition-colors">
-                                Solicitar Acceso
-                            </button>
-                        </div>
-
-                        {/* Help link */}
-                        <div className="pt-6 border-t border-gray-100 w-full">
-                            <p className="text-text-secondary text-sm">
-                                ¿Crees que esto es un error?{' '}
-                                <a href="#" className="text-primary hover:underline font-medium">
-                                    Contactar Soporte IT
-                                </a>
-                            </p>
                         </div>
                     </div>
                 </div>

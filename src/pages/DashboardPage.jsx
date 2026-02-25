@@ -14,14 +14,14 @@ const calcularPorcentajeCumplimiento = (venta, objetivo) => {
 }
 
 const getMensajeEstado = (porcentaje) => {
-    if (porcentaje >= 100) return { mensaje: 'Objetivo alcanzado', tipo: 'success' }
-    if (porcentaje >= 80) return { mensaje: 'Faltante para meta', tipo: 'warning' }
-    return { mensaje: 'No ha logrado el objetivo', tipo: 'error' }
+    if (porcentaje >= 100) return { mensaje: 'Cumpliste. ¿Te atreves a ir por mas?', tipo: 'success' }
+    if (porcentaje > 80) return { mensaje: 'Lo bueno puede ser excelente. Ve por el 100%.', tipo: 'warning' }
+    return { mensaje: 'Aún estás a tiempo de cambiar el resultado', tipo: 'error' }
 }
 
 const getColorBadge = (porcentaje) => {
     if (porcentaje >= 100) return 'success'
-    if (porcentaje >= 80) return 'warning'
+    if (porcentaje > 80) return 'warning'
     return 'error'
 }
 
@@ -73,11 +73,14 @@ const DashboardPage = () => {
 
             // Procesar objetivos
             const objMap = { Q1: 0, Q2: 0, Q3: 0, Q4: 0 }
+            let sumObjetivos = 0
             objetivos.forEach((o) => {
-                objMap[o.trimestre] = parseFloat(o.meta) || 0
+                const meta = parseFloat(o.meta) || 0
+                objMap[o.trimestre] = meta
+                sumObjetivos += meta
             })
             setObjetivosMap(objMap)
-            setObjetivoAnual(parseFloat(dist.objetivo_anual) || 0)
+            setObjetivoAnual(sumObjetivos)
         } catch (err) {
             console.error('Error cargando dashboard:', err)
             setError('Error al cargar los datos del dashboard')
@@ -144,7 +147,7 @@ const DashboardPage = () => {
                             Dashboard {distribuidor?.nombre || ''}
                         </h2>
                         <p className="text-text-secondary">
-                            Informe Ejecutivo de Desempeño Comercial • Año Fiscal {selectedYear}
+                            Informe Ejecutivo de Desempeño Comercial • Año {selectedYear}
                         </p>
                     </div>
                     <div>
@@ -306,7 +309,7 @@ const DashboardPage = () => {
                                     <span className="w-2 h-2 rounded-full bg-red-500"></span> &lt; 80%
                                 </span>
                                 <span className="flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full bg-amber-500"></span> 80-99%
+                                    <span className="w-2 h-2 rounded-full bg-amber-500"></span> 81-99%
                                 </span>
                                 <span className="flex items-center gap-1.5">
                                     <span className="w-2 h-2 rounded-full bg-emerald-500"></span> 100%+
@@ -359,13 +362,13 @@ const DashboardPage = () => {
                                             </div>
                                             <div className="pt-3 mt-3 border-t border-gray-100">
                                                 {porcentaje >= 100 ? (
-                                                    <p className="text-xs font-bold text-emerald-600">Objetivo alcanzado</p>
-                                                ) : faltante > 0 ? (
+                                                    <p className="text-xs font-bold text-emerald-600">Meta alcanzada</p>
+                                                ) : meta > 0 ? (
                                                     <p className="text-xs font-bold text-red-600 italic">
-                                                        Faltante: {formatCurrency(faltante, { compact: true })}
+                                                        Pendiente: {formatCurrency(faltante, { compact: true })}
                                                     </p>
                                                 ) : (
-                                                    <p className="text-xs font-bold text-text-secondary">Sin objetivo definido</p>
+                                                    <p className="text-xs font-bold text-text-secondary">Sin meta definida</p>
                                                 )}
                                             </div>
                                         </div>

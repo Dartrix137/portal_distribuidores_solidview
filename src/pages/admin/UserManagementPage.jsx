@@ -12,6 +12,10 @@ const UserManagementPage = () => {
     const [error, setError] = useState(null)
     const [togglingId, setTogglingId] = useState(null)
 
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 10
+
     // Cargar usuarios al montar
     useEffect(() => {
         loadUsers()
@@ -36,6 +40,18 @@ const UserManagementPage = () => {
         u.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
         u.email.toLowerCase().includes(searchTerm.toLowerCase())
     )
+
+    // Reset page to 1 when search term changes
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [searchTerm])
+
+    // Get current items for pagination
+    const totalFiltered = filteredUsers.length
+    const totalPages = Math.ceil(totalFiltered / itemsPerPage)
+    const indexOfLastItem = currentPage * itemsPerPage
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage
+    const currentUsers = filteredUsers.slice(indexOfFirstItem, indexOfLastItem)
 
     // Stats
     const totalUsers = users.length
@@ -171,7 +187,7 @@ const UserManagementPage = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {filteredUsers.map((user) => (
+                                {currentUsers.map((user) => (
                                     <tr key={user.id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
@@ -228,22 +244,43 @@ const UserManagementPage = () => {
                     </div>
 
                     {/* Pagination */}
-                    <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-gray-50">
-                        <p className="text-xs text-text-secondary font-medium">
-                            Mostrando 1 a {filteredUsers.length} de {users.length} usuarios
-                        </p>
-                        <div className="flex gap-1">
-                            <button className="w-8 h-8 rounded-lg flex items-center justify-center border border-gray-300 bg-white text-text-secondary hover:bg-gray-50 transition-colors">
-                                <span className="material-symbols-outlined text-lg">chevron_left</span>
-                            </button>
-                            <button className="w-8 h-8 rounded-lg flex items-center justify-center bg-primary text-white font-bold text-xs">
-                                1
-                            </button>
-                            <button className="w-8 h-8 rounded-lg flex items-center justify-center border border-gray-300 bg-white text-text-secondary hover:bg-gray-50 transition-colors">
-                                <span className="material-symbols-outlined text-lg">chevron_right</span>
-                            </button>
+                    {totalPages > 1 && (
+                        <div className="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50">
+                            <p className="text-xs text-text-secondary font-medium">
+                                Mostrando {indexOfFirstItem + 1} a {Math.min(indexOfLastItem, totalFiltered)} de {totalFiltered} usuarios
+                            </p>
+                            <div className="flex gap-1">
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1}
+                                    className="w-8 h-8 rounded-lg flex items-center justify-center border border-gray-300 bg-white text-text-secondary hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <span className="material-symbols-outlined text-lg">chevron_left</span>
+                                </button>
+
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                    <button
+                                        key={page}
+                                        onClick={() => setCurrentPage(page)}
+                                        className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-colors ${currentPage === page
+                                                ? 'bg-primary text-white'
+                                                : 'border border-gray-300 bg-white text-text-secondary hover:bg-gray-50'
+                                            }`}
+                                    >
+                                        {page}
+                                    </button>
+                                ))}
+
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                    disabled={currentPage === totalPages}
+                                    className="w-8 h-8 rounded-lg flex items-center justify-center border border-gray-300 bg-white text-text-secondary hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <span className="material-symbols-outlined text-lg">chevron_right</span>
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             )}
         </AdminLayout>

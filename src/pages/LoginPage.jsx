@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import logo from '../assets/logo.webp'
@@ -10,9 +10,23 @@ const LoginPage = () => {
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
 
-    const { login } = useAuth()
+    const { login, user, loading: authLoading, isAdmin } = useAuth()
     const navigate = useNavigate()
     const location = useLocation()
+
+    // Redirect authenticated users away from login page
+    useEffect(() => {
+        if (!authLoading && user) {
+            const from = location.state?.from?.pathname
+            if (from && !from.includes('login')) {
+                navigate(from, { replace: true })
+            } else if (isAdmin) {
+                navigate('/admin/clientes', { replace: true })
+            } else {
+                navigate('/dashboard', { replace: true })
+            }
+        }
+    }, [user, authLoading, isAdmin, navigate, location])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
