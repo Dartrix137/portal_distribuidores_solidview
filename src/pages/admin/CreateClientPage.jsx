@@ -4,12 +4,16 @@ import AdminLayout from '../../components/layout/AdminLayout'
 import { distribuidorService } from '../../services/distribuidorService'
 
 const SECTORES = [
-    'Manufactura y Hardware',
-    'Logística y Transporte',
-    'Software y SaaS',
-    'Servicios Financieros',
-    'Retail y Comercio',
     'Telecomunicaciones',
+    'Redes y Conectividad',
+    'ISP / Proveedores de Internet',
+    'Infraestructura IT',
+    'Fibra Óptica',
+    'CCTV y Seguridad Electrónica',
+    'Cableado Estructurado',
+    'Radiofrecuencia y Wireless',
+    'Data Centers',
+    'Integrador de Soluciones',
 ]
 
 const CreateClientPage = () => {

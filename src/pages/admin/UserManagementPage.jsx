@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import AdminLayout from '../../components/layout/AdminLayout'
 import { userService } from '../../services/userService'
 import { getInitials } from '../../utils/formatters'
+import { useAuth } from '../../context/AuthContext'
 
 const UserManagementPage = () => {
     const navigate = useNavigate()
+    const { user: currentUser } = useAuth()
     const [searchTerm, setSearchTerm] = useState('')
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(true)
@@ -242,26 +244,30 @@ const UserManagementPage = () => {
                                                 >
                                                     <span className="material-symbols-outlined text-xl">lock_reset</span>
                                                 </button>
-                                                <button
-                                                    onClick={() => toggleUserActive(user.id, user.activo)}
-                                                    disabled={togglingId === user.id}
-                                                    className={`p-2 transition-colors rounded-lg ${user.activo
-                                                        ? 'text-text-secondary hover:text-red-600 hover:bg-red-50'
-                                                        : 'text-emerald-600 hover:bg-emerald-50'
-                                                        } disabled:opacity-50`}
-                                                    title={user.activo ? 'Desactivar cuenta' : 'Activar cuenta'}
-                                                >
-                                                    <span className="material-symbols-outlined text-xl">
-                                                        {user.activo ? 'block' : 'check_circle'}
-                                                    </span>
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDeleteUser(user)}
-                                                    className="p-2 text-text-secondary hover:text-red-600 hover:bg-red-50 transition-colors rounded-lg"
-                                                    title="Eliminar usuario"
-                                                >
-                                                    <span className="material-symbols-outlined text-xl">delete</span>
-                                                </button>
+                                                {user.id !== currentUser?.id && (
+                                                    <>
+                                                        <button
+                                                            onClick={() => toggleUserActive(user.id, user.activo)}
+                                                            disabled={togglingId === user.id}
+                                                            className={`p-2 transition-colors rounded-lg ${user.activo
+                                                                ? 'text-text-secondary hover:text-red-600 hover:bg-red-50'
+                                                                : 'text-emerald-600 hover:bg-emerald-50'
+                                                                } disabled:opacity-50`}
+                                                            title={user.activo ? 'Desactivar cuenta' : 'Activar cuenta'}
+                                                        >
+                                                            <span className="material-symbols-outlined text-xl">
+                                                                {user.activo ? 'block' : 'check_circle'}
+                                                            </span>
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDeleteUser(user)}
+                                                            className="p-2 text-text-secondary hover:text-red-600 hover:bg-red-50 transition-colors rounded-lg"
+                                                            title="Eliminar usuario"
+                                                        >
+                                                            <span className="material-symbols-outlined text-xl">delete</span>
+                                                        </button>
+                                                    </>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>

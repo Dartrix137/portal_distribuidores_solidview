@@ -19,6 +19,10 @@ const SalesEntryPage = () => {
     const [success, setSuccess] = useState(false)
     const [error, setError] = useState('')
 
+    // Edit & delete state
+    const [editingId, setEditingId] = useState(null)
+    const [deletingId, setDeletingId] = useState(null)
+
     // Search & Pagination state for history table
     const [searchTerm, setSearchTerm] = useState('')
     const [currentPage, setCurrentPage] = useState(1)
@@ -110,32 +114,97 @@ const SalesEntryPage = () => {
         setError('')
 
         try {
-            const newVenta = await ventasService.create({
-                distribuidor_id: formData.distribuidorId,
-                trimestre: formData.trimestre,
-                semana: parseInt(formData.semana),
-                monto: parseFloat(formData.monto),
-                fecha: new Date().toISOString().split('T')[0],
-            })
+            const isEditing = !!editingId
+            let savedVenta;
+
+            if (isEditing) {
+                // Modo Edición
+                savedVenta = await ventasService.update(editingId, {
+                    distribuidor_id: formData.distribuidorId,
+                    trimestre: formData.trimestre,
+                    semana: parseInt(formData.semana),
+                    monto: parseFloat(formData.monto),
+                    // Mantener la fecha original o actualizarla si lo deseas. Aquí mantenemos la original
+                })
+            } else {
+                // Modo Creación
+                savedVenta = await ventasService.create({
+                    distribuidor_id: formData.distribuidorId,
+                    trimestre: formData.trimestre,
+                    semana: parseInt(formData.semana),
+                    monto: parseFloat(formData.monto),
+                    fecha: new Date().toISOString().split('T')[0],
+                })
+            }
 
             // Enriquecer con nombre del distribuidor para la tabla
             const dist = distribuidores.find(d => d.id === formData.distribuidorId)
             const enrichedVenta = {
-                ...newVenta,
+                ...savedVenta,
                 distribuidores: { id: dist?.id, nombre: dist?.nombre || 'Cliente' },
             }
 
-            setVentas(prev => [enrichedVenta, ...prev])
+            if (isEditing) {
+                setVentas(prev => prev.map(v => v.id === editingId ? enrichedVenta : v))
+                handleCancelEdit()
+            } else {
+                setVentas(prev => [enrichedVenta, ...prev])
+                // Reset form partially
+                setFormData(prev => ({ ...prev, monto: '' }))
+            }
 
-            // Reset form
-            setFormData(prev => ({ ...prev, distribuidorId: '', monto: '' }))
             setSuccess(true)
             setTimeout(() => setSuccess(false), 3000)
         } catch (err) {
-            console.error('Error registrando venta:', err)
-            setError(err.message || 'Error al registrar la venta')
+            console.error('Error guardando venta:', err)
+            setError(err.message || 'Error al guardar la venta')
         } finally {
             setLoading(false)
+        }
+    }
+
+    const handleEdit = (venta) => {
+        const fechaVenta = new Date(venta.fecha)
+        const anioVenta = fechaVenta.getFullYear().toString()
+
+        setFormData({
+            distribuidorId: venta.distribuidor_id,
+            anio: anioVenta,
+            trimestre: venta.trimestre,
+            semana: venta.semana?.toString() || '1',
+            monto: venta.monto?.toString() || '',
+        })
+        setEditingId(venta.id)
+
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
+    const handleCancelEdit = () => {
+        setEditingId(null)
+        setFormData({
+            distribuidorId: '',
+            anio: new Date().getFullYear().toString(),
+            trimestre: 'Q1',
+            semana: '1',
+            monto: '',
+        })
+        setError('')
+    }
+
+    const handleDelete = async (venta) => {
+        const confirmMsg = `¿Está seguro que desea eliminar la venta de ${formatCurrency(venta.monto)} para el cliente "${venta.distribuidores?.nombre || 'Desconocido'}"?\n\nEsta acción no se puede deshacer.`
+        if (!window.confirm(confirmMsg)) return
+
+        setDeletingId(venta.id)
+        try {
+            await ventasService.delete(venta.id)
+            setVentas(prev => prev.filter(v => v.id !== venta.id))
+        } catch (err) {
+            console.error('Error eliminando venta:', err)
+            alert('Error al eliminar la venta: ' + err.message)
+        } finally {
+            setDeletingId(null)
         }
     }
 
@@ -155,8 +224,13 @@ const SalesEntryPage = () => {
 
             {/* Entry Form */}
             <div className="card mb-10 overflow-hidden">
-                <div className="p-6 border-b border-gray-200 bg-gray-50">
-                    <h3 className="text-lg font-bold text-text-primary">Nueva entrada de datos de ventas</h3>
+                <div className="p-6 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                    <h3 className="text-lg font-bold text-text-primary">
+                        {editingId ? 'Editar entrada de ventas' : 'Nueva entrada de datos de ventas'}
+                    </h3>
+                    {editingId && (
+                        <span className="badge badge-warning">Modo Edición</span>
+                    )}
                 </div>
                 <form onSubmit={handleSubmit} className="p-6">
                     {error && (
@@ -243,25 +317,37 @@ const SalesEntryPage = () => {
                                 required
                             />
                         </div>
-                        <div className="flex items-center gap-4">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                            {editingId && (
+                                <button
+                                    type="button"
+                                    onClick={handleCancelEdit}
+                                    disabled={loading}
+                                    className="h-12 px-6 text-sm font-medium text-text-secondary hover:bg-gray-100 rounded-lg transition-colors"
+                                >
+                                    Cancelar
+                                </button>
+                            )}
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="bg-primary hover:brightness-110 text-white font-bold h-12 px-8 rounded-lg flex items-center justify-center gap-2 transition-all shadow-md active:scale-[0.98] disabled:opacity-70"
+                                className="bg-primary hover:brightness-110 text-white font-bold h-12 px-8 rounded-lg flex items-center justify-center gap-2 transition-all shadow-md active:scale-[0.98] disabled:opacity-70 whitespace-nowrap"
                             >
                                 {loading ? (
                                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                                 ) : (
                                     <>
-                                        <span className="material-symbols-outlined">add_task</span>
-                                        Registrar venta
+                                        <span className="material-symbols-outlined">
+                                            {editingId ? 'save' : 'add_task'}
+                                        </span>
+                                        {editingId ? 'Guardar cambios' : 'Registrar venta'}
                                     </>
                                 )}
                             </button>
                             {success && (
-                                <span className="text-emerald-600 text-sm font-medium flex items-center gap-1">
+                                <span className="text-emerald-600 text-sm font-medium flex items-center gap-1 whitespace-nowrap">
                                     <span className="material-symbols-outlined">check_circle</span>
-                                    Venta registrada
+                                    {editingId ? 'Venta actualizada' : 'Venta registrada'}
                                 </span>
                             )}
                         </div>
@@ -309,6 +395,9 @@ const SalesEntryPage = () => {
                                         <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider">
                                             Valor de Venta
                                         </th>
+                                        <th className="px-6 py-4 text-xs font-bold text-text-secondary uppercase tracking-wider text-right">
+                                            Acciones
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
@@ -332,6 +421,25 @@ const SalesEntryPage = () => {
                                             </td>
                                             <td className="px-6 py-4 text-sm font-bold text-text-primary">
                                                 {formatCurrency(venta.monto)}
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <div className="flex justify-end gap-1">
+                                                    <button
+                                                        onClick={() => handleEdit(venta)}
+                                                        className="p-2 text-text-secondary hover:text-primary hover:bg-primary/5 transition-colors rounded-lg"
+                                                        title="Editar venta"
+                                                    >
+                                                        <span className="material-symbols-outlined text-xl">edit</span>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(venta)}
+                                                        disabled={deletingId === venta.id}
+                                                        className="p-2 text-text-secondary hover:text-red-600 hover:bg-red-50 transition-colors rounded-lg disabled:opacity-50"
+                                                        title="Eliminar venta"
+                                                    >
+                                                        <span className="material-symbols-outlined text-xl">delete</span>
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}
@@ -363,8 +471,8 @@ const SalesEntryPage = () => {
                                             key={page}
                                             onClick={() => setCurrentPage(page)}
                                             className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-colors ${currentPage === page
-                                                    ? 'bg-primary text-white'
-                                                    : 'border border-gray-300 bg-white text-text-secondary hover:bg-gray-50'
+                                                ? 'bg-primary text-white'
+                                                : 'border border-gray-300 bg-white text-text-secondary hover:bg-gray-50'
                                                 }`}
                                         >
                                             {page}

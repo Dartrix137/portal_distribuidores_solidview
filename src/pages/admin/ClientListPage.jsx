@@ -12,6 +12,7 @@ const ClientListPage = () => {
     const [distribuidores, setDistribuidores] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [deletingId, setDeletingId] = useState(null)
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1)
@@ -93,6 +94,27 @@ const ClientListPage = () => {
     // Stats
     const totalClientes = distribuidores.length
     const clientesActivos = distribuidores.filter((d) => d.users?.activo !== false).length
+
+    const handleDeleteDistribuidor = async (distribuidor) => {
+        const usersVinculados = Array.isArray(distribuidor.users)
+            ? distribuidor.users.filter(u => u.role === 'distribuidor').length
+            : distribuidor.users?.role === 'distribuidor' ? 1 : 0
+
+        const mensaje = `¿Está seguro que desea eliminar al cliente "${distribuidor.nombre}"?\n\nEsta acción:\n• Eliminará todas sus ventas y objetivos registrados\n${usersVinculados > 0 ? `• Desactivará ${usersVinculados} usuario(s) vinculado(s)\n` : ''}\nEsta acción no se puede deshacer.`
+
+        if (!window.confirm(mensaje)) return
+
+        try {
+            setDeletingId(distribuidor.id)
+            await distribuidorService.delete(distribuidor.id)
+            setDistribuidores(prev => prev.filter(d => d.id !== distribuidor.id))
+        } catch (err) {
+            console.error('Error eliminando distribuidor:', err)
+            alert('Error al eliminar el cliente: ' + err.message)
+        } finally {
+            setDeletingId(null)
+        }
+    }
 
     return (
         <AdminLayout
@@ -225,7 +247,7 @@ const ClientListPage = () => {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <div className="flex justify-end gap-2">
+                                            <div className="flex justify-end gap-1">
                                                 <button
                                                     onClick={() =>
                                                         navigate(`/admin/clientes/${distribuidor.id}`)
@@ -234,6 +256,14 @@ const ClientListPage = () => {
                                                     title="Editar / Ver detalles"
                                                 >
                                                     <span className="material-symbols-outlined text-xl">edit</span>
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteDistribuidor(distribuidor)}
+                                                    disabled={deletingId === distribuidor.id}
+                                                    className="p-2 text-text-secondary hover:text-red-600 hover:bg-red-50 transition-colors rounded-lg disabled:opacity-50"
+                                                    title="Eliminar cliente"
+                                                >
+                                                    <span className="material-symbols-outlined text-xl">delete</span>
                                                 </button>
                                             </div>
                                         </td>
@@ -263,8 +293,8 @@ const ClientListPage = () => {
                                         key={page}
                                         onClick={() => setCurrentPage(page)}
                                         className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-colors ${currentPage === page
-                                                ? 'bg-primary text-white'
-                                                : 'border border-gray-300 bg-white text-text-secondary hover:bg-gray-50'
+                                            ? 'bg-primary text-white'
+                                            : 'border border-gray-300 bg-white text-text-secondary hover:bg-gray-50'
                                             }`}
                                     >
                                         {page}

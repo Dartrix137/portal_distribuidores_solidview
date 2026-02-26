@@ -81,4 +81,25 @@ export const distribuidorService = {
         if (error) throw error
         return data
     },
+
+    // Eliminar distribuidor (desactiva usuarios vinculados primero)
+    async delete(id) {
+        // 1. Desactivar usuarios tipo distribuidor vinculados
+        const { error: usersError } = await supabase
+            .from('users')
+            .update({ activo: false })
+            .eq('distribuidor_id', id)
+            .eq('role', 'distribuidor')
+
+        if (usersError) throw usersError
+
+        // 2. Eliminar el distribuidor (ventas y objetivos se eliminan por CASCADE)
+        const { error } = await supabase
+            .from('distribuidores')
+            .delete()
+            .eq('id', id)
+
+        if (error) throw error
+        return true
+    },
 }
