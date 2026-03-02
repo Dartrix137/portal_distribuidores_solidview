@@ -128,7 +128,7 @@ const LoginPage = () => {
                                         type={showPassword ? 'text' : 'password'}
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="flex-1 h-12 px-4 rounded-l-lg border border-r-0 border-gray-300 bg-white text-text-primary placeholder:text-text-secondary/60 text-base focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                                        className="flex-1 min-w-0 w-full h-12 px-4 rounded-l-lg border border-r-0 border-gray-300 bg-white text-text-primary placeholder:text-text-secondary/60 text-base focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                                         placeholder="••••••••"
                                         required
                                         autoComplete="current-password"
@@ -136,7 +136,7 @@ const LoginPage = () => {
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="flex items-center justify-center px-4 border border-l-0 border-gray-300 bg-white rounded-r-lg cursor-pointer text-text-secondary hover:text-primary transition-colors"
+                                        className="flex-shrink-0 flex items-center justify-center px-4 border border-l-0 border-gray-300 bg-white rounded-r-lg cursor-pointer text-text-secondary hover:text-primary transition-colors"
                                     >
                                         <span className="material-symbols-outlined text-xl">
                                             {showPassword ? 'visibility_off' : 'visibility'}
