@@ -191,7 +191,7 @@ const DashboardPage = () => {
                             <div className="grid md:grid-cols-2 gap-8 items-center">
                                 <div>
                                     <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
-                                        Objetivo Anual
+                                        Objetivo Anual (110%)
                                     </p>
                                     <div className="flex flex-col gap-1">
                                         <div className="flex items-baseline gap-2">
@@ -199,7 +199,7 @@ const DashboardPage = () => {
                                                 {formatCurrency(ventaAnual, { compact: true })}
                                             </span>
                                             <span className="text-slate-400 text-xl font-medium">
-                                                / {formatCurrency(objetivoAnual, { compact: true })} Meta
+                                                / {formatCurrency(objetivoAnual * 1.1, { compact: true })} Meta
                                             </span>
                                         </div>
 
@@ -207,18 +207,39 @@ const DashboardPage = () => {
                                 </div>
                                 <div className="space-y-3">
                                     <div className="flex justify-between items-end">
-                                        <span className="text-sm font-semibold text-text-primary">Venta real acumulada</span>
-                                        <span className="text-primary font-black text-lg">{porcentajeAnual}% de cumplimiento base</span>
+                                        <span className="text-sm font-semibold text-text-primary">Progreso hacia el máximo</span>
+                                        <span className={`font-black text-lg ${estadoAnual.tipo === 'success' ? 'text-emerald-600' :
+                                            estadoAnual.tipo === 'warning' ? 'text-amber-600' :
+                                                estadoAnual.tipo === 'error' ? 'text-red-500' :
+                                                    'text-rose-700'
+                                            }`}>
+                                            {Math.round((ventaAnual / (objetivoAnual * 1.1)) * 100) || 0}% de avance
+                                        </span>
                                     </div>
-                                    <div className="h-4 w-full bg-gray-100 rounded-full overflow-hidden">
+                                    <div className="h-4 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner relative">
+                                        {/* Marcador del 100% base */}
+                                        <div className="absolute top-0 bottom-0 border-l-2 border-dashed border-gray-400 z-20" style={{ left: `${(100 / 110) * 100}%` }} title="Meta Normal (100%)"></div>
                                         <div
-                                            className="h-full bg-primary rounded-full transition-all duration-1000"
-                                            style={{ width: `${Math.min((ventaAnual / (objetivoAnual)) * 100, 100) || 0}%` }}
-                                        ></div>
+                                            className={`h-full rounded-full transition-all duration-1000 relative z-10 ${estadoAnual.tipo === 'success' ? 'bg-emerald-500' :
+                                                estadoAnual.tipo === 'warning' ? 'bg-amber-500' :
+                                                    estadoAnual.tipo === 'error' ? 'bg-red-500' :
+                                                        'bg-rose-700'
+                                                }`}
+                                            style={{ width: `${Math.min((ventaAnual / (objetivoAnual * 1.1)) * 100, 100) || 0}%` }}
+                                        >
+                                            <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                                        </div>
                                     </div>
                                     <div className="flex justify-between items-center text-sm">
                                         <span className="text-text-secondary">
-                                            {ventaAnual < (objetivoAnual) ? `Faltante para el 100%: ${formatCurrency(Math.max((objetivoAnual) - ventaAnual, 0))}` : '¡Meta superada!'}
+                                            {ventaAnual < (objetivoAnual * 1.1) ? (
+                                                <>Faltante 110%: <span className="font-semibold text-text-primary">{formatCurrency(Math.max((objetivoAnual * 1.1) - ventaAnual, 0))}</span></>
+                                            ) : (
+                                                <span className="text-emerald-600 font-bold flex items-center gap-1">
+                                                    <span className="material-symbols-outlined text-sm">check_circle</span>
+                                                    Meta 110% superada por {formatCurrency(Math.abs((objetivoAnual * 1.1) - ventaAnual))}
+                                                </span>
+                                            )}
                                         </span>
                                         <span className={`font-bold italic ${estadoAnual.tipo === 'success' ? 'text-emerald-600' :
                                             estadoAnual.tipo === 'warning' ? 'text-amber-600' :
@@ -283,19 +304,21 @@ const DashboardPage = () => {
 
                                         <div className="space-y-3">
                                             <div className="flex justify-between items-end">
-                                                <span className="text-sm font-semibold text-text-primary">Progreso del trimestre</span>
+                                                <span className="text-sm font-semibold text-text-primary">Progreso hacia el máximo</span>
                                                 <span className={`font-black text-lg ${qEstado.tipo === 'success' ? 'text-emerald-600' :
                                                     qEstado.tipo === 'warning' ? 'text-amber-600' :
                                                         qEstado.tipo === 'error' ? 'text-red-500' :
                                                             'text-rose-700'
                                                     }`}>
-                                                    {qPorcentaje}% base
+                                                    {Math.round((currentQuarterVenta / (currentQuarterMeta * 1.1)) * 100) || 0}% de avance
                                                 </span>
                                             </div>
 
-                                            <div className="h-4 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner">
+                                            <div className="h-4 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner relative">
+                                                {/* Marcador del 100% base */}
+                                                <div className="absolute top-0 bottom-0 border-l-2 border-dashed border-gray-400 z-20" style={{ left: `${(100 / 110) * 100}%` }} title="Meta Normal (100%)"></div>
                                                 <div
-                                                    className={`h-full rounded-full transition-all duration-1000 relative ${qEstado.tipo === 'success' ? 'bg-emerald-500' :
+                                                    className={`h-full rounded-full transition-all duration-1000 relative z-10 ${qEstado.tipo === 'success' ? 'bg-emerald-500' :
                                                         qEstado.tipo === 'warning' ? 'bg-amber-500' :
                                                             qEstado.tipo === 'error' ? 'bg-red-500' :
                                                                 'bg-rose-700'
