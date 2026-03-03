@@ -14,15 +14,17 @@ const calcularPorcentajeCumplimiento = (venta, objetivo) => {
 }
 
 const getMensajeEstado = (porcentaje) => {
-    if (porcentaje >= 100) return { mensaje: 'Cumpliste. ¿Te atreves a ir por mas?', tipo: 'success' }
-    if (porcentaje > 80) return { mensaje: 'Lo bueno puede ser excelente. Ve por el 100%.', tipo: 'warning' }
-    return { mensaje: 'Aún estás a tiempo de cambiar el resultado', tipo: 'error' }
+    if (porcentaje >= 110) return { mensaje: '¡Excelente! Aseguraste la comisión máxima del 3%.', tipo: 'success' }
+    if (porcentaje >= 90) return { mensaje: '¡Muy bien! Aseguraste el 2%, ve por el 3%.', tipo: 'warning' }
+    if (porcentaje >= 80) return { mensaje: '¡Sigue así! Ya aseguraste el 1%.', tipo: 'error' }
+    return { mensaje: 'Aún estás a tiempo de cambiar el resultado', tipo: 'critical' }
 }
 
 const getColorBadge = (porcentaje) => {
-    if (porcentaje >= 100) return 'success'
-    if (porcentaje > 80) return 'warning'
-    return 'error'
+    if (porcentaje >= 110) return 'success'
+    if (porcentaje >= 90) return 'warning'
+    if (porcentaje >= 80) return 'error'
+    return 'critical'
 }
 
 // Determinar trimestre actual basado en la fecha
@@ -197,12 +199,10 @@ const DashboardPage = () => {
                                                 {formatCurrency(ventaAnual, { compact: true })}
                                             </span>
                                             <span className="text-slate-400 text-xl font-medium">
-                                                / {formatCurrency(objetivoAnual * 1.1, { compact: true })} Meta
+                                                / {formatCurrency(objetivoAnual, { compact: true })} Meta
                                             </span>
                                         </div>
-                                        <div className="text-sm font-semibold text-text-secondary mt-1">
-                                            Meta normal (100%): {formatCurrency(objetivoAnual, { compact: true })}
-                                        </div>
+
                                     </div>
                                 </div>
                                 <div className="space-y-3">
@@ -213,15 +213,17 @@ const DashboardPage = () => {
                                     <div className="h-4 w-full bg-gray-100 rounded-full overflow-hidden">
                                         <div
                                             className="h-full bg-primary rounded-full transition-all duration-1000"
-                                            style={{ width: `${Math.min((ventaAnual / (objetivoAnual * 1.1)) * 100, 100) || 0}%` }}
+                                            style={{ width: `${Math.min((ventaAnual / (objetivoAnual)) * 100, 100) || 0}%` }}
                                         ></div>
                                     </div>
                                     <div className="flex justify-between items-center text-sm">
                                         <span className="text-text-secondary">
-                                            {ventaAnual < (objetivoAnual * 1.1) ? `Faltante para el 110%: ${formatCurrency(Math.max((objetivoAnual * 1.1) - ventaAnual, 0))}` : '¡Meta de 110% superada!'}
+                                            {ventaAnual < (objetivoAnual) ? `Faltante para el 100%: ${formatCurrency(Math.max((objetivoAnual) - ventaAnual, 0))}` : '¡Meta superada!'}
                                         </span>
                                         <span className={`font-bold italic ${estadoAnual.tipo === 'success' ? 'text-emerald-600' :
-                                            estadoAnual.tipo === 'warning' ? 'text-amber-600' : 'text-red-500'
+                                            estadoAnual.tipo === 'warning' ? 'text-amber-600' :
+                                                estadoAnual.tipo === 'error' ? 'text-red-500' :
+                                                    'text-rose-700'
                                             }`}>
                                             {estadoAnual.mensaje}
                                         </span>
@@ -244,42 +246,61 @@ const DashboardPage = () => {
                                         <div>
                                             <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
                                                 <span className="material-symbols-outlined text-primary">timelapse</span>
-                                                Objetivo Trimestral Actual ({currentQuarterKey})
+                                                Objetivo Trimestral Actual (110%) ({currentQuarterKey})
                                             </h3>
                                             <p className="text-sm text-text-secondary mt-1">
                                                 Seguimiento en tiempo real del trimestre en curso
                                             </p>
                                         </div>
-                                        <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider flex items-center gap-1">
-                                            <span className="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+                                        <div className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider flex items-center gap-1 ${qEstado.tipo === 'success' ? 'bg-emerald-100 text-emerald-700' :
+                                            qEstado.tipo === 'warning' ? 'bg-amber-100 text-amber-700' :
+                                                qEstado.tipo === 'error' ? 'bg-red-100 text-red-700' :
+                                                    'bg-rose-100 text-rose-800'
+                                            }`}>
+                                            <span className={`w-2 h-2 rounded-full animate-pulse ${qEstado.tipo === 'success' ? 'bg-emerald-500' :
+                                                qEstado.tipo === 'warning' ? 'bg-amber-500' :
+                                                    qEstado.tipo === 'error' ? 'bg-red-500' :
+                                                        'bg-rose-700'
+                                                }`}></span>
                                             En Curso
                                         </div>
                                     </div>
 
                                     <div className="grid md:grid-cols-2 gap-8 items-center">
                                         <div>
-                                            <div className="flex items-baseline gap-2 mb-2">
-                                                <span className="text-4xl font-black text-text-primary">
-                                                    {formatCurrency(currentQuarterVenta, { compact: true })}
-                                                </span>
-                                                <span className="text-slate-400 text-lg font-medium">
-                                                    / {formatCurrency(currentQuarterMeta, { compact: true })} Meta
-                                                </span>
+                                            <div className="flex flex-col gap-1 mb-2">
+                                                <div className="flex items-baseline gap-2">
+                                                    <span className="text-4xl font-black text-text-primary">
+                                                        {formatCurrency(currentQuarterVenta, { compact: true })}
+                                                    </span>
+                                                    <span className="text-slate-400 text-lg font-medium">
+                                                        / {formatCurrency(currentQuarterMeta * 1.1, { compact: true })} Meta
+                                                    </span>
+                                                </div>
+
                                             </div>
                                         </div>
 
                                         <div className="space-y-3">
                                             <div className="flex justify-between items-end">
                                                 <span className="text-sm font-semibold text-text-primary">Progreso del trimestre</span>
-                                                <span className={`font-black text-lg ${qEstado.tipo === 'success' ? 'text-emerald-600' : qEstado.tipo === 'warning' ? 'text-amber-600' : 'text-primary'}`}>
-                                                    {qPorcentaje}%
+                                                <span className={`font-black text-lg ${qEstado.tipo === 'success' ? 'text-emerald-600' :
+                                                    qEstado.tipo === 'warning' ? 'text-amber-600' :
+                                                        qEstado.tipo === 'error' ? 'text-red-500' :
+                                                            'text-rose-700'
+                                                    }`}>
+                                                    {qPorcentaje}% base
                                                 </span>
                                             </div>
 
                                             <div className="h-4 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner">
                                                 <div
-                                                    className={`h-full rounded-full transition-all duration-1000 relative ${qEstado.tipo === 'success' ? 'bg-emerald-500' : 'bg-primary'}`}
-                                                    style={{ width: `${Math.min(qPorcentaje, 100)}%` }}
+                                                    className={`h-full rounded-full transition-all duration-1000 relative ${qEstado.tipo === 'success' ? 'bg-emerald-500' :
+                                                        qEstado.tipo === 'warning' ? 'bg-amber-500' :
+                                                            qEstado.tipo === 'error' ? 'bg-red-500' :
+                                                                'bg-rose-700'
+                                                        }`}
+                                                    style={{ width: `${Math.min((currentQuarterVenta / (currentQuarterMeta * 1.1)) * 100, 100) || 0}%` }}
                                                 >
                                                     <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
                                                 </div>
@@ -287,17 +308,19 @@ const DashboardPage = () => {
 
                                             <div className="flex justify-between items-center text-sm">
                                                 <span className="text-text-secondary">
-                                                    {qFaltante > 0 ? (
-                                                        <>Faltante: <span className="font-semibold text-text-primary">{formatCurrency(qFaltante)}</span></>
+                                                    {currentQuarterVenta < (currentQuarterMeta * 1.1) ? (
+                                                        <>Faltante 110%: <span className="font-semibold text-text-primary">{formatCurrency(Math.max((currentQuarterMeta * 1.1) - currentQuarterVenta, 0))}</span></>
                                                     ) : (
                                                         <span className="text-emerald-600 font-bold flex items-center gap-1">
                                                             <span className="material-symbols-outlined text-sm">check_circle</span>
-                                                            Meta superada por {formatCurrency(Math.abs(qFaltante))}
+                                                            Meta 110% superada por {formatCurrency(Math.abs((currentQuarterMeta * 1.1) - currentQuarterVenta))}
                                                         </span>
                                                     )}
                                                 </span>
                                                 <span className={`font-bold italic ${qEstado.tipo === 'success' ? 'text-emerald-600' :
-                                                    qEstado.tipo === 'warning' ? 'text-amber-600' : 'text-red-500'
+                                                    qEstado.tipo === 'warning' ? 'text-amber-600' :
+                                                        qEstado.tipo === 'error' ? 'text-red-500' :
+                                                            'text-rose-700'
                                                     }`}>
                                                     {qEstado.mensaje}
                                                 </span>
@@ -311,15 +334,18 @@ const DashboardPage = () => {
                         {/* Quarterly Goals Section */}
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="text-xl font-bold text-text-primary">Metas Trimestrales</h3>
-                            <div className="flex gap-4 text-[10px] uppercase font-bold tracking-wider text-text-secondary">
+                            <div className="flex gap-4 text-[10px] uppercase font-bold tracking-wider text-text-secondary flex-wrap">
                                 <span className="flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full bg-red-500"></span> &lt; 80%
+                                    <span className="w-2 h-2 rounded-full bg-rose-700"></span> &lt; 80%
                                 </span>
                                 <span className="flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full bg-amber-500"></span> 81-99%
+                                    <span className="w-2 h-2 rounded-full bg-red-500"></span> 80-89%
                                 </span>
                                 <span className="flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span> 100%+
+                                    <span className="w-2 h-2 rounded-full bg-amber-500"></span> 90-109%
+                                </span>
+                                <span className="flex items-center gap-1.5">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span> 110%+
                                 </span>
                             </div>
                         </div>
@@ -337,11 +363,18 @@ const DashboardPage = () => {
                                 return (
                                     <div
                                         key={quarter}
-                                        className={`bg-white border p-6 rounded-xl relative ${isCurrentQ ? 'border-2 border-primary/20' : 'border-gray-200'
-                                            }`}
+                                        className={`bg-white border p-6 rounded-xl relative ${isCurrentQ ? `border-2 ${colorBadge === 'success' ? 'border-emerald-500/50' :
+                                            colorBadge === 'warning' ? 'border-amber-500/50' :
+                                                colorBadge === 'error' ? 'border-red-500/50' :
+                                                    'border-rose-700/50'
+                                            }` : 'border-gray-200'}`}
                                     >
                                         {isCurrentQ && (
-                                            <div className="absolute -top-2 right-4 bg-primary text-white text-[9px] px-2 py-0.5 rounded font-black uppercase">
+                                            <div className={`absolute -top-2 right-4 text-white text-[9px] px-2 py-0.5 rounded font-black uppercase ${colorBadge === 'success' ? 'bg-emerald-500' :
+                                                colorBadge === 'warning' ? 'bg-amber-500' :
+                                                    colorBadge === 'error' ? 'bg-red-500' :
+                                                        'bg-rose-700'
+                                                }`}>
                                                 En curso
                                             </div>
                                         )}
@@ -349,16 +382,18 @@ const DashboardPage = () => {
                                             <span className="font-black text-xl text-text-primary">{quarter}</span>
                                             <span className={`px-2 py-1 rounded text-xs font-black ${colorBadge === 'success' ? 'bg-emerald-50 text-emerald-600' :
                                                 colorBadge === 'warning' ? 'bg-amber-50 text-amber-600' :
-                                                    isCurrentQ ? 'bg-primary/10 text-primary' : 'bg-red-50 text-red-600'
+                                                    colorBadge === 'error' ? 'bg-red-50 text-red-600' :
+                                                        'bg-rose-50 text-rose-800'
                                                 }`}>
                                                 {isCurrentQ ? `Est. ${porcentaje}%` : `${porcentaje}%`}
                                             </span>
                                         </div>
                                         <div className="space-y-2 text-sm">
+
                                             <div className="flex justify-between text-text-secondary">
-                                                <span>Meta</span>
+                                                <span>Meta 110%</span>
                                                 <span className="font-bold text-text-primary">
-                                                    {formatCurrency(meta, { compact: true })}
+                                                    {formatCurrency(meta * 1.1, { compact: true })}
                                                 </span>
                                             </div>
                                             <div className="flex justify-between text-text-secondary">
@@ -368,11 +403,11 @@ const DashboardPage = () => {
                                                 </span>
                                             </div>
                                             <div className="pt-3 mt-3 border-t border-gray-100">
-                                                {porcentaje >= 100 ? (
-                                                    <p className="text-xs font-bold text-emerald-600">Meta alcanzada</p>
+                                                {venta >= (meta * 1.1) ? (
+                                                    <p className="text-xs font-bold text-emerald-600">110% alcanzado</p>
                                                 ) : meta > 0 ? (
                                                     <p className="text-xs font-bold text-red-600 italic">
-                                                        Pendiente: {formatCurrency(faltante, { compact: true })}
+                                                        Faltante 110%: {formatCurrency(Math.max((meta * 1.1) - venta, 0), { compact: true })}
                                                     </p>
                                                 ) : (
                                                     <p className="text-xs font-bold text-text-secondary">Sin meta definida</p>
@@ -390,15 +425,18 @@ const DashboardPage = () => {
                                 <span className="material-symbols-outlined">info</span>
                             </div>
                             <div>
-                                <h4 className="font-bold text-text-primary">Estado de Cuenta</h4>
+                                <h4 className="font-bold text-text-primary">Avance hacia tu objetivo</h4>
                                 <p className="text-sm text-text-secondary mt-1 leading-relaxed">
-                                    Actualmente el cumplimiento general es del {porcentajeAnual}%.
-                                    {faltanteAnual > 0
-                                        ? ` Se requiere un incremento en las operaciones para alcanzar la meta normal de ${formatCurrency(objetivoAnual, { compact: true })} y lograr el 110% (${formatCurrency(objetivoAnual * 1.1, { compact: true })}) para ganar el 3% de comisión.`
-                                        : (ventaAnual < objetivoAnual * 1.1)
-                                            ? ` ¡Felicidades! Has alcanzado tu meta normal. Faltan ${formatCurrency((objetivoAnual * 1.1) - ventaAnual, { compact: true })} para llegar al 110% y ganar tu comisión del 3%.`
-                                            : ' ¡Felicidades! Has superado el 110% de tu objetivo anual de ventas, asegurando tu comisión del 3%.'
-                                    }
+                                    Actualmente llevas un {qPorcentaje}% de cumplimiento del {currentQuarterKey}.
+                                    {currentQuarterVenta < currentQuarterMeta * 1.1 ? (
+                                        <>
+                                            {' '}Para alcanzar el 110% de la meta y ganar el Rebate del 3%, esto significa que aún faltan <strong>{formatCurrency(Math.max((currentQuarterMeta * 1.1) - currentQuarterVenta, 0), { compact: true })}</strong> por facturar. Es el momento de acelerar las operaciones y asegurar ese ingreso adicional. ¡Vamos a lograrlo!
+                                        </>
+                                    ) : (
+                                        <>
+                                            {' '}¡Felicidades! Has superado el 110% de la meta del {currentQuarterKey} y aseguraste el Rebate del 3%. ¡Excelente trabajo!
+                                        </>
+                                    )}
                                 </p>
                             </div>
                         </div>
