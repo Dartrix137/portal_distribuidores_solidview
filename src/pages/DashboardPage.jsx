@@ -374,6 +374,7 @@ const DashboardPage = () => {
                                 const venta = resumenVentas[quarter] || 0
                                 const meta = objetivosMap[quarter] || 0
                                 const porcentaje = calcularPorcentajeCumplimiento(venta, meta)
+                                const porcentaje110 = calcularPorcentajeCumplimiento(venta, meta * 1.1)
                                 const faltante = meta - venta
                                 const colorBadge = getColorBadge(porcentaje)
                                 const isCurrentQ = quarter === currentQuarterKey && selectedYear === currentYear
@@ -403,7 +404,7 @@ const DashboardPage = () => {
                                                     colorBadge === 'error' ? 'bg-red-50 text-red-600' :
                                                         'bg-rose-50 text-rose-800'
                                                 }`}>
-                                                {isCurrentQ ? `Est. ${porcentaje}%` : `${porcentaje}%`}
+                                                {isCurrentQ ? `Est. ${porcentaje110}%` : `${porcentaje110}%`}
                                             </span>
                                         </div>
                                         <div className="space-y-2 text-sm">
@@ -445,7 +446,7 @@ const DashboardPage = () => {
                             <div>
                                 <h4 className="font-bold text-text-primary">Avance hacia tu objetivo</h4>
                                 <p className="text-sm text-text-secondary mt-1 leading-relaxed">
-                                    Actualmente llevas un {qPorcentaje}% de cumplimiento del {currentQuarterKey}.
+                                    Actualmente llevas un {Math.round((currentQuarterVenta / (currentQuarterMeta * 1.1)) * 100) || 0}% de avance del {currentQuarterKey}.
                                     {currentQuarterVenta < currentQuarterMeta * 1.1 ? (
                                         <>
                                             {' '}Para alcanzar el 110% de la meta y ganar el Rebate del 3%, esto significa que aún faltan <strong>{formatCurrency(Math.max((currentQuarterMeta * 1.1) - currentQuarterVenta, 0), { compact: true })}</strong> por facturar. Es el momento de acelerar las operaciones y asegurar ese ingreso adicional. ¡Vamos a lograrlo!
