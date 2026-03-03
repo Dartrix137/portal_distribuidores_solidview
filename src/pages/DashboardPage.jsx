@@ -189,31 +189,36 @@ const DashboardPage = () => {
                             <div className="grid md:grid-cols-2 gap-8 items-center">
                                 <div>
                                     <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
-                                        Objetivo Anual
+                                        Objetivo Anual (110%)
                                     </p>
-                                    <div className="flex items-baseline gap-2">
-                                        <span className="text-5xl font-black text-text-primary">
-                                            {formatCurrency(ventaAnual, { compact: true })}
-                                        </span>
-                                        <span className="text-slate-400 text-xl font-medium">
-                                            / {formatCurrency(objetivoAnual, { compact: true })} Meta
-                                        </span>
+                                    <div className="flex flex-col gap-1">
+                                        <div className="flex items-baseline gap-2">
+                                            <span className="text-5xl font-black text-text-primary">
+                                                {formatCurrency(ventaAnual, { compact: true })}
+                                            </span>
+                                            <span className="text-slate-400 text-xl font-medium">
+                                                / {formatCurrency(objetivoAnual * 1.1, { compact: true })} Meta
+                                            </span>
+                                        </div>
+                                        <div className="text-sm font-semibold text-text-secondary mt-1">
+                                            Meta normal (100%): {formatCurrency(objetivoAnual, { compact: true })}
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="space-y-3">
                                     <div className="flex justify-between items-end">
                                         <span className="text-sm font-semibold text-text-primary">Venta real acumulada</span>
-                                        <span className="text-primary font-black text-lg">{porcentajeAnual}% de cumplimiento</span>
+                                        <span className="text-primary font-black text-lg">{porcentajeAnual}% de cumplimiento base</span>
                                     </div>
                                     <div className="h-4 w-full bg-gray-100 rounded-full overflow-hidden">
                                         <div
                                             className="h-full bg-primary rounded-full transition-all duration-1000"
-                                            style={{ width: `${Math.min(porcentajeAnual, 100)}%` }}
+                                            style={{ width: `${Math.min((ventaAnual / (objetivoAnual * 1.1)) * 100, 100) || 0}%` }}
                                         ></div>
                                     </div>
                                     <div className="flex justify-between items-center text-sm">
                                         <span className="text-text-secondary">
-                                            Faltante: {formatCurrency(Math.max(faltanteAnual, 0))}
+                                            {ventaAnual < (objetivoAnual * 1.1) ? `Faltante para el 110%: ${formatCurrency(Math.max((objetivoAnual * 1.1) - ventaAnual, 0))}` : '¡Meta de 110% superada!'}
                                         </span>
                                         <span className={`font-bold italic ${estadoAnual.tipo === 'success' ? 'text-emerald-600' :
                                             estadoAnual.tipo === 'warning' ? 'text-amber-600' : 'text-red-500'
@@ -389,8 +394,10 @@ const DashboardPage = () => {
                                 <p className="text-sm text-text-secondary mt-1 leading-relaxed">
                                     Actualmente el cumplimiento general es del {porcentajeAnual}%.
                                     {faltanteAnual > 0
-                                        ? ` Se requiere un incremento en las operaciones de cierre para alcanzar la meta anual de ${formatCurrency(objetivoAnual, { compact: true })}.`
-                                        : ' ¡Felicidades! Has alcanzado tu objetivo anual de ventas.'
+                                        ? ` Se requiere un incremento en las operaciones para alcanzar la meta normal de ${formatCurrency(objetivoAnual, { compact: true })} y lograr el 110% (${formatCurrency(objetivoAnual * 1.1, { compact: true })}) para ganar el 3% de comisión.`
+                                        : (ventaAnual < objetivoAnual * 1.1)
+                                            ? ` ¡Felicidades! Has alcanzado tu meta normal. Faltan ${formatCurrency((objetivoAnual * 1.1) - ventaAnual, { compact: true })} para llegar al 110% y ganar tu comisión del 3%.`
+                                            : ' ¡Felicidades! Has superado el 110% de tu objetivo anual de ventas, asegurando tu comisión del 3%.'
                                     }
                                 </p>
                             </div>
