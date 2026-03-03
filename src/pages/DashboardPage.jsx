@@ -15,16 +15,14 @@ const calcularPorcentajeCumplimiento = (venta, objetivo) => {
 
 const getMensajeEstado = (porcentaje) => {
     if (porcentaje >= 110) return { mensaje: '¡Excelente! Aseguraste la comisión máxima del 3%.', tipo: 'success' }
-    if (porcentaje >= 90) return { mensaje: '¡Muy bien! Aseguraste el 2%, ve por el 3%.', tipo: 'warning' }
-    if (porcentaje >= 80) return { mensaje: '¡Sigue así! Ya aseguraste el 1%.', tipo: 'error' }
-    return { mensaje: 'Aún estás a tiempo de cambiar el resultado', tipo: 'critical' }
+    if (porcentaje >= 80) return { mensaje: '¡Sigue así! Estás en zona de comisión.', tipo: 'warning' }
+    return { mensaje: 'Aún estás a tiempo de cambiar el resultado', tipo: 'error' }
 }
 
 const getColorBadge = (porcentaje) => {
     if (porcentaje >= 110) return 'success'
-    if (porcentaje >= 90) return 'warning'
-    if (porcentaje >= 80) return 'error'
-    return 'critical'
+    if (porcentaje >= 80) return 'warning'
+    return 'error'
 }
 
 // Determinar trimestre actual basado en la fecha
@@ -359,13 +357,10 @@ const DashboardPage = () => {
                             <h3 className="text-xl font-bold text-text-primary">Metas Trimestrales</h3>
                             <div className="flex gap-4 text-[10px] uppercase font-bold tracking-wider text-text-secondary flex-wrap">
                                 <span className="flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full bg-rose-700"></span> &lt; 80%
+                                    <span className="w-2 h-2 rounded-full bg-red-500"></span> &lt; 80%
                                 </span>
                                 <span className="flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full bg-red-500"></span> 80-89%
-                                </span>
-                                <span className="flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full bg-amber-500"></span> 90-109%
+                                    <span className="w-2 h-2 rounded-full bg-amber-500"></span> 80-109%
                                 </span>
                                 <span className="flex items-center gap-1.5">
                                     <span className="w-2 h-2 rounded-full bg-emerald-500"></span> 110%+
@@ -503,17 +498,17 @@ const DashboardPage = () => {
 
                                 {/* Tier 2 */}
                                 <div className={`relative rounded-xl p-6 border-2 transition-all duration-300 ${porcentajeAnual >= 90 && porcentajeAnual <= 109
-                                    ? 'border-blue-400 bg-blue-50 shadow-lg shadow-blue-100'
+                                    ? 'border-amber-400 bg-amber-50 shadow-lg shadow-amber-100'
                                     : 'border-gray-200 bg-white'
                                     }`}>
                                     {porcentajeAnual >= 90 && porcentajeAnual <= 109 && (
-                                        <div className="absolute -top-2.5 left-4 bg-blue-500 text-white text-[9px] px-2.5 py-0.5 rounded font-black uppercase tracking-wider">
+                                        <div className="absolute -top-2.5 left-4 bg-amber-500 text-white text-[9px] px-2.5 py-0.5 rounded font-black uppercase tracking-wider">
                                             Tu nivel actual
                                         </div>
                                     )}
                                     <div className="flex items-center gap-3 mb-3">
                                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${porcentajeAnual >= 90 && porcentajeAnual <= 109
-                                            ? 'bg-blue-500 text-white'
+                                            ? 'bg-amber-500 text-white'
                                             : 'bg-gray-100 text-gray-400'
                                             }`}>
                                             <span className="material-symbols-outlined text-xl">rocket_launch</span>
@@ -524,7 +519,7 @@ const DashboardPage = () => {
                                         </div>
                                     </div>
                                     <div className={`text-sm font-semibold rounded-lg py-2 px-3 text-center ${porcentajeAnual >= 90 && porcentajeAnual <= 109
-                                        ? 'bg-blue-100 text-blue-700'
+                                        ? 'bg-amber-100 text-amber-700'
                                         : 'bg-gray-50 text-text-secondary'
                                         }`}>
                                         90% – 109% de cumplimiento
