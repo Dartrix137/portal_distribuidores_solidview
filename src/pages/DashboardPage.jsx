@@ -191,7 +191,7 @@ const DashboardPage = () => {
                             <div className="grid md:grid-cols-2 gap-8 items-center">
                                 <div>
                                     <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
-                                        Objetivo Anual (110%)
+                                        Objetivo Anual
                                     </p>
                                     <div className="flex flex-col gap-1">
                                         <div className="flex items-baseline gap-2">
